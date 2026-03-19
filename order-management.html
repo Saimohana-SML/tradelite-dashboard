@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tradelite Admin - Orders</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f3f4f6",
+                        "inverse-primary": "#b2c5ff",
+                        "primary": "#003d9b",
+                        "secondary-container": "#b6c8fe",
+                        "primary-container": "#0052cc",
+                        "on-surface-variant": "#434654",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4c5d8d",
+                        "on-secondary-container": "#415382",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-background": "#191c1e",
+                        "surface": "#f8f9fb",
+                        "tertiary-container": "#a33500",
+                        "surface-container-highest": "#e1e2e4",
+                        "outline-variant": "#c3c6d6",
+                        "surface-variant": "#e1e2e4",
+                        "error": "#ba1a1a",
+                        "tertiary": "#7b2600",
+                        "tertiary-fixed": "#ffdbcf",
+                        "inverse-surface": "#2e3132",
+                        "surface-dim": "#d9dadc",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#021945",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "on-secondary-fixed-variant": "#344573",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-primary-fixed": "#001848",
+                        "inverse-on-surface": "#f0f1f3",
+                        "on-tertiary-container": "#ffc6b2",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#c4d2ff",
+                        "surface-bright": "#f8f9fb",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#dae2ff",
+                        "outline": "#737685",
+                        "surface-container": "#edeef0",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "secondary-fixed-dim": "#b4c5fb",
+                        "surface-container-high": "#e7e8ea",
+                        "primary-fixed": "#dae2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fb"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        .tonal-shift {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body antialiased">
+    <!-- SideNavBar (Authority: JSON) -->
+    <aside
+        class="h-screen w-64 fixed left-0 top-0 z-40 bg-slate-50 dark:bg-slate-950 flex flex-col border-r border-transparent">
+        <div class="text-2xl font-black text-blue-800 dark:text-blue-400 mt-10 mb-8 px-4">Tradelite</div>
+        <nav class="flex-1 space-y-1">
+            <!-- Active State Logic: Mapping "Orders" -->
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="admin-dashboard.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="font-inter text-sm font-medium">Dashboard</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="products.html">
+                <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                <span class="font-inter text-sm font-medium">Products</span>
+            </a>
+            <a class="bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer"
+                href="order-management.html">
+                <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                <span class="font-inter text-sm font-medium">Orders</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="employees.html">
+                <span class="material-symbols-outlined" data-icon="badge">badge</span>
+                <span class="font-inter text-sm font-medium">Employees</span>
+            </a>
+        </nav>
+        <div class="mt-auto pb-6 space-y-1 border-t border-surface-container">
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="font-inter text-sm font-medium">Settings</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span class="font-inter text-sm font-medium">Support</span>
+            </a>
+            <div class="px-6 py-4 flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white text-xs font-bold">
+                    JD</div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold truncate">Admin User</p>
+                    <p class="text-[10px] text-on-surface-variant">Executive Panel</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="ml-64 min-h-screen">
+        <!-- TopAppBar (Authority: JSON) -->
+        <header
+            class="fixed top-0 right-0 left-64 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md shadow-sm shadow-slate-200/50 dark:shadow-none flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                        data-icon="search">search</span>
+                    <input
+                        class="bg-slate-100 dark:bg-slate-800/50 border-none rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all"
+                        placeholder="Quick search orders..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button
+                    class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded-full transition-colors active:scale-95">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                </button>
+                <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                <button
+                    class="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-manrope font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors active:scale-95">
+                    <span>Logout</span>
+                    <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+                </button>
+            </div>
+        </header>
+        <!-- Page Body -->
+        <div class="pt-24 px-8 pb-12 max-w-7xl mx-auto">
+            <!-- Hero Header Section -->
+            <div class="mb-10 flex justify-between items-end">
+                <div>
+                    <h1 class="text-display-sm font-extrabold text-on-surface tracking-tight mb-2">Order Management</h1>
+                    <p class="text-on-surface-variant font-medium">Monitor and manage your executive transaction
+                        pipeline.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        class="bg-surface-container-low text-on-surface px-4 py-2 rounded-lg font-semibold text-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+                        Export CSV
+                    </button>
+
+                </div>
+            </div>
+            <!-- Dashboard Insights (Asymmetric Layout) -->
+            <div class="grid grid-cols-12 gap-6 mb-8">
+                <div
+                    class="col-span-8 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-headline font-bold text-on-surface">Weekly Distribution</h3>
+                        <span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">+12.5% vs
+                            LW</span>
+                    </div>
+                    <div class="h-32 flex items-end gap-2 px-2">
+                        <!-- Mock Chart Visualization -->
+                        <div class="flex-1 bg-surface-container-high rounded-t-sm h-1/2"></div>
+                        <div class="flex-1 bg-surface-container-high rounded-t-sm h-2/3"></div>
+                        <div class="flex-1 bg-primary rounded-t-sm h-full"></div>
+                        <div class="flex-1 bg-surface-container-high rounded-t-sm h-3/4"></div>
+                        <div class="flex-1 bg-surface-container-high rounded-t-sm h-1/2"></div>
+                        <div class="flex-1 bg-tertiary-container/20 rounded-t-sm h-1/3"></div>
+                        <div class="flex-1 bg-surface-container-high rounded-t-sm h-1/2"></div>
+                    </div>
+                </div>
+                <div class="col-span-4 bg-primary text-white p-6 rounded-xl shadow-lg relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-primary-fixed-dim text-xs font-bold tracking-widest uppercase mb-4">Pending Tasks
+                        </p>
+                        <h2 id="pending-tasks-count" class="text-3xl font-black mb-1">14</h2>
+                        <p class="text-primary-fixed-dim text-sm">Orders require contacting</p>
+                        <button
+                            class="mt-6 bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors border border-white/20">
+                            Action Queue
+                        </button>
+                    </div>
+                    <!-- Abstract Decorative Element -->
+                    <div class="absolute -right-4 -bottom-4 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+                </div>
+            </div>
+            <!-- Table Card Container -->
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-transparent overflow-hidden">
+                <!-- Table Filters -->
+                <div
+                    class="p-6 border-b border-surface-container-low flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex gap-4 items-center">
+                        <div class="relative">
+                            <select
+                                class="appearance-none bg-surface-container-low border-none rounded-lg pl-4 pr-10 py-2 text-sm font-semibold focus:ring-1 focus:ring-primary text-on-surface-variant cursor-pointer">
+                                <option>All Statuses</option>
+                                <option>New</option>
+                                <option>Contacted</option>
+                                <option>Closed</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"
+                                data-icon="expand_more">expand_more</span>
+                        </div>
+                        <div class="relative">
+                            <select
+                                class="appearance-none bg-surface-container-low border-none rounded-lg pl-4 pr-10 py-2 text-sm font-semibold focus:ring-1 focus:ring-primary text-on-surface-variant cursor-pointer">
+                                <option>Last 30 Days</option>
+                                <option>Last 7 Days</option>
+                                <option>Today</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"
+                                data-icon="calendar_today">calendar_today</span>
+                        </div>
+                    </div>
+                    <div class="text-xs font-medium text-on-surface-variant">
+                        Showing <span class="text-on-surface font-bold">1-10</span> of 142 orders
+                    </div>
+                </div>
+                <!-- Actual Data Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-low/50">
+                                <th
+                                    class="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Order ID</th>
+                                <th
+                                    class="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Customer Name</th>
+                                <th
+                                    class="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Date</th>
+                                <th
+                                    class="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Status</th>
+                                <th
+                                    class="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider text-right">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-table-body" class="divide-y divide-surface-container-low">
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-on-surface-variant">
+                                    <span class="material-symbols-outlined animate-spin text-primary text-3xl mb-4"
+                                        data-icon="sync">sync</span>
+                                    <p class="font-semibold">Loading orders from Google Sheets...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div
+                    class="px-6 py-6 bg-surface-container-low/30 border-t border-surface-container-low flex items-center justify-between">
+                    <button
+                        class="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-white disabled:opacity-50"
+                        disabled="">
+                        <span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+                        Previous
+                    </button>
+                    <div class="flex gap-1">
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-white text-xs font-bold flex items-center justify-center">1</button>
+                        <button
+                            class="w-8 h-8 rounded-lg text-on-surface-variant text-xs font-bold flex items-center justify-center hover:bg-white transition-colors">2</button>
+                        <button
+                            class="w-8 h-8 rounded-lg text-on-surface-variant text-xs font-bold flex items-center justify-center hover:bg-white transition-colors">3</button>
+                        <span class="w-8 h-8 flex items-center justify-center text-on-surface-variant">...</span>
+                        <button
+                            class="w-8 h-8 rounded-lg text-on-surface-variant text-xs font-bold flex items-center justify-center hover:bg-white transition-colors">15</button>
+                    </div>
+                    <button
+                        class="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-white">
+                        Next
+                        <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Contextual Help / Status Guide -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 bg-surface-container-low rounded-xl flex items-start gap-4">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+                        <span class="material-symbols-outlined" data-icon="mail">mail</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm mb-1">New Orders</h4>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Require review within 2 hours of
+                            submission for executive tier service.</p>
+                    </div>
+                </div>
+                <div class="p-6 bg-surface-container-low rounded-xl flex items-start gap-4">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant">
+                        <span class="material-symbols-outlined" data-icon="phone_callback">phone_callback</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm mb-1">In Progress</h4>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Ensure all client documentation is
+                            uploaded before closing the file.</p>
+                    </div>
+                </div>
+                <div class="p-6 bg-surface-container-low rounded-xl flex items-start gap-4">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined" data-icon="verified">verified</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm mb-1">Automated Archiving</h4>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Closed orders are archived after 90
+                            days of inactivity for system efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Contextual FAB (Hidden on this transactional page per instructions) -->
+
+    <!-- Order Detail Modal -->
+    <div id="order-modal"
+        class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-surface rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div class="px-6 py-4 border-b border-surface-container-high flex justify-between items-center bg-white">
+                <div>
+                    <h2 class="text-xl font-headline font-bold text-on-surface" id="modal-order-title">Order Details
+                    </h2>
+                    <p class="text-xs font-semibold text-on-surface-variant tracking-wider mt-1"
+                        id="modal-order-customer">Customer: ...</p>
+                </div>
+                <button onclick="closeOrderModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1 bg-surface-bright">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div
+                        class="bg-surface-container-lowest p-4 rounded-lg shadow-sm font-semibold border border-transparent">
+                        <p class="text-xs text-on-surface-variant mb-1 uppercase tracking-widest">Total Amount</p>
+                        <p class="text-2xl font-bold font-headline text-primary" id="modal-order-total">₹0</p>
+                    </div>
+                    <div
+                        class="bg-surface-container-lowest p-4 rounded-lg shadow-sm font-semibold border border-transparent">
+                        <p class="text-xs text-on-surface-variant mb-1 uppercase tracking-widest">Date / Time</p>
+                        <p class="text-sm font-bold text-on-surface" id="modal-order-date">Just now</p>
+                    </div>
+                </div>
+
+                <!-- Receipt Items -->
+                <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 px-1">Purchased
+                    Items</h3>
+                <div class="bg-surface-container-lowest rounded-lg shadow-sm border border-transparent overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-surface-container-low/50">
+                            <tr>
+                                <th
+                                    class="px-4 py-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                                    Product</th>
+                                <th
+                                    class="px-4 py-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-right">
+                                    Qty</th>
+                                <th
+                                    class="px-4 py-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-right">
+                                    Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-items-body" class="divide-y divide-surface-container-low text-sm">
+                            <!-- Injected dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-surface-container-high bg-white flex justify-end">
+                <button onclick="closeOrderModal()"
+                    class="px-6 py-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-semibold text-sm transition-colors">Close
+                    panel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Vanilla JS Integration for Fetching Orders -->
+    <script>
+        // Use the EXACT same Web App URL that you pasted into add-newproduct.html
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+
+        let allOrders = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tableBody = document.getElementById('order-table-body');
+            try {
+                // Fetch orders
+                const url = new URL(APPS_SCRIPT_URL);
+                url.searchParams.append("action", "getOrders");
+                const response = await fetch(url.toString(), { method: 'GET' });
+
+                // createJsonResponse unwraps payload inside .data
+                const result = await response.json();
+                allOrders = result.data ? result.data : (Array.isArray(result) ? result : []);
+
+                tableBody.innerHTML = '';
+
+                if (!allOrders || allOrders.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-medium">No orders found.</td></tr>`;
+                    document.getElementById('pending-tasks-count').innerText = "0";
+                    return;
+                }
+
+                let pendingCount = 0;
+
+                // Reverse slice to show newest orders first
+                allOrders.slice().reverse().forEach(order => {
+                    const orderId = order.Order_ID || "Unknown";
+                    const displayId = orderId.length > 8 ? "#" + orderId.substring(0, 8).toUpperCase() : "#" + orderId;
+                    const customerName = order.Customer_Name || "Guest User";
+
+                    let dateDisplay = "Just now";
+                    if (order.Timestamp) {
+                        try {
+                            const d = new Date(order.Timestamp);
+                            dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: '2-digit', minute: '2-digit' });
+                        } catch (e) { }
+                    }
+
+                    const status = order.Status || "New";
+                    if (status === "New" || status === "Contacted") {
+                        pendingCount++;
+                    }
+                    let statusBg = "bg-secondary-fixed text-on-secondary-fixed";
+
+                    if (status.toLowerCase().includes("contacted")) {
+                        statusBg = "bg-tertiary-fixed text-on-tertiary-fixed-variant";
+                    } else if (status.toLowerCase().includes("close") || status.toLowerCase().includes("complete")) {
+                        statusBg = "bg-green-100 text-green-800";
+                    }
+
+                    const rowHTML = `
+                        <tr class="hover:bg-surface-bright transition-colors group">
+                            <td class="px-6 py-5"><span class="font-bold text-primary-container">${displayId}</span></td>
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden text-xs font-bold text-slate-500">
+                                        ${customerName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span class="font-semibold text-on-surface">${customerName}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-sm text-on-surface-variant">${dateDisplay}</td>
+                            <td class="px-6 py-5">
+                                <div class="inline-flex items-center px-1 rounded-full text-xs font-bold ${statusBg}">
+                                    <select data-order-id="${orderId}" onchange="changeOrderStatus(this)" class="appearance-none bg-transparent border-none focus:ring-0 cursor-pointer px-2 py-1 pr-4" style="background-image: none;">
+                                        <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
+                                        <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                                        <option value="Closed" ${status === 'Closed' ? 'selected' : ''}>Closed</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button onclick="viewOrderDetails('${order.Order_ID}')" title="View details" class="p-2 text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors tooltip group">
+                                    <span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+                                </button>
+                            </td>
+                        </tr>`;
+                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
+                });
+
+                document.getElementById('pending-tasks-count').innerText = pendingCount;
+
+            } catch (error) {
+                console.error("Failed to load orders:", error);
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-error font-medium">Failed to load orders. Make sure APPS_SCRIPT_URL is valid.</td></tr>`;
+            }
+        });
+
+        window.changeOrderStatus = async function (selectEl) {
+            const orderId = selectEl.getAttribute('data-order-id');
+            const newStatus = selectEl.value;
+            const originalValue = selectEl.defaultValue || selectEl.querySelector('option[selected]')?.value;
+
+            // Visual loading state
+            selectEl.disabled = true;
+            selectEl.classList.add('opacity-50', 'animate-pulse');
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'updateOrderStatus',
+                        payload: { orderId: orderId, status: newStatus }
+                    })
+                });
+
+                const result = await response.json();
+                if (result.status === "success") {
+                    // Refresh styles via reload or manual DOM update
+                    window.location.reload();
+                } else {
+                    throw new Error("Backend reported an error");
+                }
+            } catch (err) {
+                console.error("Failed to update status:", err);
+                alert("Could not update order status. Please try again later.");
+                selectEl.value = originalValue; // Revert
+            } finally {
+                selectEl.disabled = false;
+                selectEl.classList.remove('opacity-50', 'animate-pulse');
+            }
+        }
+
+        window.viewOrderDetails = function (orderId) {
+            const order = allOrders.find(o => o.Order_ID === orderId);
+            if (!order) return;
+
+            const displayId = orderId.length > 8 ? "#" + orderId.substring(0, 8).toUpperCase() : "#" + orderId;
+            document.getElementById('modal-order-title').innerText = `Order ${displayId}`;
+            document.getElementById('modal-order-customer').innerText = order.Customer_Name || "Guest User";
+
+            let dateDisplay = "Just now";
+            if (order.Timestamp) {
+                try {
+                    const d = new Date(order.Timestamp);
+                    dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: '2-digit', minute: '2-digit' });
+                } catch (e) { }
+            }
+            document.getElementById('modal-order-date').innerText = dateDisplay;
+
+            const total = parseFloat(order.Total_Amount || 0);
+            document.getElementById('modal-order-total').innerText = total > 0 ? "₹" + total.toFixed(2) : "₹0.00";
+
+            const tbody = document.getElementById('modal-items-body');
+            tbody.innerHTML = '';
+
+            // Render items safely
+            let items = [];
+            if (typeof order.Items === "string") {
+                try { items = JSON.parse(order.Items); } catch (e) { }
+            } else if (Array.isArray(order.Items)) {
+                items = order.Items;
+            }
+
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-xs text-on-surface-variant italic">No cart items recorded for this order.</td></tr>`;
+            } else {
+                items.forEach(item => {
+                    const price = parseFloat(item.price || 0).toFixed(2);
+                    const qty = parseInt(item.quantity || 1);
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-4 py-3 font-semibold text-on-surface">${item.name || "Unknown Product"}</td>
+                            <td class="px-4 py-3 text-right text-on-surface-variant font-bold">x${qty}</td>
+                            <td class="px-4 py-3 text-right text-on-surface font-headline font-bold">₹${price}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('order-modal').classList.remove('hidden');
+        }
+
+        window.closeOrderModal = function () {
+            document.getElementById('order-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

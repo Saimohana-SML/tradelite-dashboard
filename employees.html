@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tradelite Admin - Employees</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003d9b",
+                        "primary-container": "#0052cc",
+                        "on-primary": "#ffffff",
+                        "surface": "#f8f9fb",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#434654",
+                        "surface-container-low": "#f3f4f6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e7e8ea",
+                        "surface-variant": "#e1e2e4",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed": "#dae2ff",
+                        "on-secondary-fixed": "#021945",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body text-on-surface antialiased">
+    <!-- SideNavBar -->
+    <aside
+        class="h-screen w-64 fixed left-0 top-0 z-40 bg-slate-50 dark:bg-slate-950 font-inter text-sm font-medium flex flex-col border-r border-transparent">
+        <div class="text-2xl font-black text-blue-800 mt-10 mb-8 px-6">
+            Tradelite
+            <div class="text-xs font-medium text-slate-500 tracking-wider uppercase mt-1">Executive Panel</div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
+                href="admin-dashboard.html">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
+                href="products.html">
+                <span class="material-symbols-outlined">inventory_2</span> Products
+            </a>
+            <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
+                href="order-management.html">
+                <span class="material-symbols-outlined">shopping_cart</span> Orders
+            </a>
+            <a class="bg-blue-100 text-blue-900 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer"
+                href="employees.html">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
+                Employees
+            </a>
+        </nav>
+        <div class="mt-auto pb-6 space-y-1 border-t border-slate-200 pt-4">
+            <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
+                href="#">
+                <span class="material-symbols-outlined">settings</span> Settings
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Canvas -->
+    <main class="ml-64 min-h-screen pt-12">
+        <div class="px-10 pb-12">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+                <div class="space-y-2">
+                    <h1
+                        class="text-display-lg font-headline font-extrabold text-on-surface tracking-tight leading-none text-4xl">
+                        Sales Team</h1>
+                    <p class="text-on-surface-variant font-medium">Manage your sales representatives and employees.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openEmployeeModal()"
+                        class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-lg font-bold flex items-center gap-2 shadow-lg hover:shadow-primary/30 active:scale-95 transition-all">
+                        <span class="material-symbols-outlined">person_add</span>
+                        Add Employee
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-surface-container-low p-6 rounded-lg flex justify-between items-center group">
+                    <div>
+                        <p
+                            class="text-label-md text-on-surface-variant uppercase tracking-widest text-xs font-bold mb-1">
+                            Total Headcount</p>
+                        <p id="stat-total" class="text-2xl font-headline font-bold">...</p>
+                    </div>
+                    <div class="p-3 bg-secondary-fixed rounded-xl text-on-secondary-fixed">
+                        <span class="material-symbols-outlined">groups</span>
+                    </div>
+                </div>
+                <div class="bg-surface-container-low p-6 rounded-lg flex justify-between items-center group">
+                    <div>
+                        <p
+                            class="text-label-md text-on-surface-variant uppercase tracking-widest text-xs font-bold mb-1">
+                            Active Staff</p>
+                        <p id="stat-active" class="text-2xl font-headline font-bold text-primary">...</p>
+                    </div>
+                    <div class="p-3 bg-primary-fixed rounded-xl text-on-primary-fixed">
+                        <span class="material-symbols-outlined">verified_user</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Table Container -->
+            <div
+                class="bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-outline-variant/10">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-low/50">
+                                <th
+                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Employee Name</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Mobile</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Email</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Role</th>
+                                <th
+                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employee-table-body" class="divide-y divide-surface-variant/50">
+                            <tr>
+                                <td colspan="5"
+                                    class="px-8 py-10 text-center text-on-surface-variant font-medium animate-pulse">
+                                    Loading employees...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Employee Modal -->
+    <div id="employee-modal"
+        class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-surface rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div class="px-6 py-4 border-b border-surface-container-high flex justify-between items-center bg-white">
+                <h2 class="text-xl font-headline font-bold text-on-surface">Add New Employee</h2>
+                <button onclick="closeEmployeeModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-variant text-on-surface-variant">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+            <form id="employee-form" class="p-6 space-y-4 bg-white">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Full Name</label>
+                    <input type="text" id="emp-name" required
+                        class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm"
+                        placeholder="e.g. Rahul Sharma" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Mobile Number</label>
+                    <input type="tel" id="emp-mobile" required
+                        class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm"
+                        placeholder="+91 9876543210" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Email Address</label>
+                    <input type="email" id="emp-email" required
+                        class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm"
+                        placeholder="rahul@tradelite.in" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Role / Designation</label>
+                    <select id="emp-role"
+                        class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm">
+                        <option value="Sales Representative">Sales Representative</option>
+                        <option value="Regional Manager">Regional Manager</option>
+                        <option value="Account Executive">Account Executive</option>
+                    </select>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" id="submit-emp-btn"
+                        class="w-full py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:bg-primary-container transition-all">
+                        Register Employee
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+
+        document.addEventListener('DOMContentLoaded', fetchEmployees);
+
+        async function fetchEmployees() {
+            const tableBody = document.getElementById('employee-table-body');
+            try {
+                const url = new URL(APPS_SCRIPT_URL);
+                url.searchParams.append("action", "getEmployees");
+                const res = await fetch(url.toString());
+                const result = await res.json();
+
+                const employees = result.data || [];
+                tableBody.innerHTML = '';
+
+                document.getElementById('stat-total').innerText = employees.length;
+                document.getElementById('stat-active').innerText = employees.filter(e => e.Status === "Active").length;
+
+                if (employees.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="px-8 py-10 text-center text-on-surface-variant">No employees registered yet.</td></tr>`;
+                    return;
+                }
+
+                employees.forEach(emp => {
+                    let dateDisplay = "Just now";
+                    if (emp.JoinedDate) {
+                        try {
+                            const d = new Date(emp.JoinedDate);
+                            dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+                        } catch (e) { }
+                    }
+
+                    const rowHTML = `
+                        <tr class="hover:bg-surface-bright transition-colors group">
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-lg">
+                                        ${(emp.Name || "U").charAt(0).toUpperCase()}
+                                    </div>
+                                    <span class="font-headline font-bold text-on-surface">${emp.Name || "Unknown"}</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6 text-sm font-medium text-on-surface-variant">${emp.Mobile || "-"}</td>
+                            <td class="px-8 py-6 text-sm">${emp.Email || "-"}</td>
+                            <td class="px-8 py-6">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-fixed text-on-secondary-fixed rounded-full text-[11px] font-bold tracking-wider">
+                                    ${emp.Role || "Sales Rep"}
+                                </span>
+                            </td>
+                            <td class="px-8 py-6 text-sm text-on-surface-variant">${dateDisplay}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
+                });
+
+            } catch (err) {
+                console.error("Failed to fetch employees:", err);
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-8 py-10 text-center text-error">Failed to load data.</td></tr>`;
+            }
+        }
+
+        function openEmployeeModal() {
+            document.getElementById('employee-modal').classList.remove('hidden');
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employee-modal').classList.add('hidden');
+            document.getElementById('employee-form').reset();
+        }
+
+        document.getElementById('employee-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-emp-btn');
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">refresh</span> Registering...`;
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('emp-name').value,
+                mobile: document.getElementById('emp-mobile').value,
+                email: document.getElementById('emp-email').value,
+                role: document.getElementById('emp-role').value
+            };
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'addEmployee',
+                        payload: payload
+                    })
+                });
+
+                const result = await response.json();
+                if (result.status === "success") {
+                    closeEmployeeModal();
+                    fetchEmployees(); // Reload list
+                } else {
+                    alert("Backend error.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to submit.");
+            } finally {
+                btn.innerHTML = `Register Employee`;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

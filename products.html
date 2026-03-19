@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tradelite Admin - Products</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f3f4f6",
+                        "inverse-primary": "#b2c5ff",
+                        "primary": "#003d9b",
+                        "secondary-container": "#b6c8fe",
+                        "primary-container": "#0052cc",
+                        "on-surface-variant": "#434654",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4c5d8d",
+                        "on-secondary-container": "#415382",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-background": "#191c1e",
+                        "surface": "#f8f9fb",
+                        "tertiary-container": "#a33500",
+                        "surface-container-highest": "#e1e2e4",
+                        "outline-variant": "#c3c6d6",
+                        "surface-variant": "#e1e2e4",
+                        "error": "#ba1a1a",
+                        "tertiary": "#7b2600",
+                        "tertiary-fixed": "#ffdbcf",
+                        "inverse-surface": "#2e3132",
+                        "surface-dim": "#d9dadc",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#021945",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "on-secondary-fixed-variant": "#344573",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-primary-fixed": "#001848",
+                        "inverse-on-surface": "#f0f1f3",
+                        "on-tertiary-container": "#ffc6b2",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#c4d2ff",
+                        "surface-bright": "#f8f9fb",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#dae2ff",
+                        "outline": "#737685",
+                        "surface-container": "#edeef0",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "secondary-fixed-dim": "#b4c5fb",
+                        "surface-container-high": "#e7e8ea",
+                        "primary-fixed": "#dae2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fb"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+
+        .tonal-shift {
+            transition: background-color 0.2s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body text-on-surface antialiased">
+    <!-- SideNavBar (Shared Component) -->
+    <aside
+        class="h-screen w-64 fixed left-0 top-0 z-40 bg-slate-50 dark:bg-slate-950 font-inter text-sm font-medium flex flex-col border-r border-transparent">
+        <div class="text-2xl font-black text-blue-800 dark:text-blue-400 mt-10 mb-8 px-6">
+            Tradelite
+            <div class="text-xs font-medium text-slate-500 tracking-wider uppercase mt-1">Executive Panel</div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="admin-dashboard.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+            <!-- Active Tab: Products -->
+            <a class="bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer"
+                href="products.html">
+                <span class="material-symbols-outlined" data-icon="inventory_2"
+                    style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                Products
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="order-management.html">
+                <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                Orders
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="employees.html">
+                <span class="material-symbols-outlined" data-icon="badge">badge</span>
+                Employees
+            </a>
+        </nav>
+        <div class="mt-auto pb-6 space-y-1 border-t border-slate-200 dark:border-slate-800 pt-4">
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                Support
+            </a>
+        </div>
+    </aside>
+    <!-- Main Canvas -->
+    <main class="ml-64 min-h-screen">
+        <!-- TopNavBar (Shared Component) -->
+        <header
+            class="fixed top-0 right-0 left-64 z-30 bg-white/70 backdrop-blur-md font-manrope font-semibold text-sm shadow-sm shadow-slate-200/50 flex justify-between items-center px-8 py-4">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="relative w-full max-w-md">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
+                        data-icon="search">search</span>
+                    <input
+                        class="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-slate-400 transition-all"
+                        placeholder="Global search..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <button
+                        class="relative p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors active:scale-95">
+                        <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+                    </button>
+                    <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors active:scale-95">
+                        <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+                    </button>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-200"></div>
+                <button
+                    class="text-blue-700 hover:text-blue-800 font-bold active:scale-95 transition-transform">Logout</button>
+            </div>
+        </header>
+        <!-- Content Area -->
+        <div class="pt-24 px-10 pb-12">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+                <div class="space-y-2">
+                    <h1
+                        class="text-display-lg font-headline font-extrabold text-on-surface tracking-tight leading-none text-4xl">
+                        Inventory Catalog</h1>
+                    <p class="text-on-surface-variant font-medium">Manage your retail assets and stock levels with
+                        precision.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="generate-json-btn"
+                        class="bg-surface-container-high border border-outline-variant text-on-surface hover:bg-surface-container-highest px-6 py-3 rounded-lg font-bold flex items-center gap-2 shadow-sm transition-all focus:ring-2 focus:ring-primary/20">
+                        <span class="material-symbols-outlined text-[18px]">publish</span>
+                        Publish JSON
+                    </button>
+                    <a href="add-newproduct.html"
+                        class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all inline-flex cursor-pointer">
+                        <span class="material-symbols-outlined" data-icon="add">add</span>
+                        Add New Product
+                    </a>
+                </div>
+            </div>
+            <!-- Dashboard Bento / Stats Row (Optional High-end Feel) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div
+                    class="bg-surface-container-low p-6 rounded-lg border border-transparent flex justify-between items-center group hover:bg-surface-bright transition-all">
+                    <div>
+                        <p
+                            class="text-label-md text-on-surface-variant uppercase tracking-widest text-xs font-bold mb-1">
+                            Total SKU</p>
+                        <p id="stat-total" class="text-2xl font-headline font-bold">...</p>
+                    </div>
+                    <div class="p-3 bg-primary-fixed rounded-xl text-on-primary-fixed">
+                        <span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-low p-6 rounded-lg border border-transparent flex justify-between items-center group hover:bg-surface-bright transition-all">
+                    <div>
+                        <p
+                            class="text-label-md text-on-surface-variant uppercase tracking-widest text-xs font-bold mb-1">
+                            Out of Stock</p>
+                        <p id="stat-oos" class="text-2xl font-headline font-bold text-error">...</p>
+                    </div>
+                    <div class="p-3 bg-error-container rounded-xl text-on-error-container">
+                        <span class="material-symbols-outlined" data-icon="warning">warning</span>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-low p-6 rounded-lg border border-transparent flex justify-between items-center group hover:bg-surface-bright transition-all">
+                    <div>
+                        <p
+                            class="text-label-md text-on-surface-variant uppercase tracking-widest text-xs font-bold mb-1">
+                            Active Listings</p>
+                        <p id="stat-active" class="text-2xl font-headline font-bold text-tertiary">...%</p>
+                    </div>
+                    <div class="p-3 bg-tertiary-fixed rounded-xl text-on-tertiary-fixed">
+                        <span class="material-symbols-outlined" data-icon="verified">verified</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Table Container (Card Layout) -->
+            <div
+                class="bg-surface-container-lowest rounded-xl shadow-xl shadow-slate-200/40 overflow-hidden border border-outline-variant/10">
+                <!-- Table Filters & Search -->
+                <div
+                    class="p-6 bg-surface-container-low/50 flex flex-wrap items-center justify-between gap-4 border-b border-outline-variant/5">
+                    <div class="flex items-center gap-3 flex-1 min-w-[300px]">
+                        <div class="relative w-full">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+                                data-icon="filter_list">filter_list</span>
+                            <input id="search-input"
+                                class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest rounded-lg border-none focus:ring-2 focus:ring-primary/20 text-sm"
+                                placeholder="Filter by product name, SKU or brand..." type="text" />
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="filter-category"
+                            class="bg-surface-container-lowest border-none rounded-lg text-sm font-medium px-4 py-2.5 focus:ring-2 focus:ring-primary/20 text-on-surface-variant cursor-pointer">
+                            <option value="">All Categories</option>
+                            <!-- Dynamically populated -->
+                        </select>
+                        <select id="filter-status"
+                            class="bg-surface-container-lowest border-none rounded-lg text-sm font-medium px-4 py-2.5 focus:ring-2 focus:ring-primary/20 text-on-surface-variant cursor-pointer">
+                            <option value="">Status: All</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        <button
+                            class="p-2.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+                            <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Product Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-low/30">
+                                <th
+                                    class="px-8 py-4 text-left text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Product Name</th>
+                                <th
+                                    class="px-8 py-4 text-left text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Category</th>
+                                <th
+                                    class="px-8 py-4 text-left text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Selling Price</th>
+                                <th
+                                    class="px-8 py-4 text-left text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Stock / Availability</th>
+                                <th
+                                    class="px-8 py-4 text-left text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Status</th>
+                                <th
+                                    class="px-8 py-4 text-right text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.05em]">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table-body" class="divide-y divide-outline-variant/5">
+                            <tr>
+                                <td colspan="6" class="px-8 py-10 text-center text-on-surface-variant">
+                                    <span class="material-symbols-outlined animate-spin text-primary text-3xl mb-4"
+                                        data-icon="sync">sync</span>
+                                    <p class="font-semibold">Loading products from Google Sheets...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination / Footer -->
+                <div
+                    class="px-8 py-5 bg-surface-container-low/50 border-t border-outline-variant/5 flex items-center justify-between">
+                    <p class="text-xs font-medium text-on-surface-variant">Showing <span id="pagination-range"
+                            class="text-on-surface">0-0</span> of <span id="pagination-total"
+                            class="text-on-surface">0</span>
+                        products
+                    </p>
+                    <div id="pagination-controls" class="flex items-center gap-2">
+                        <!-- Dynamically Generated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vanilla JS Integration for Fetching Products -->
+    <script>
+        // Use the EXACT same Web App URL that you pasted into add-newproduct.html
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tableBody = document.getElementById('product-table-body');
+
+            try {
+                // Fetch products (GET request with ?action=getProducts)
+                const url = new URL(APPS_SCRIPT_URL);
+                url.searchParams.append("action", "getProducts");
+
+                const response = await fetch(url.toString(), {
+                    method: 'GET'
+                });
+
+                const fetchedProducts = await response.json();
+                allProducts = Array.isArray(fetchedProducts) ? fetchedProducts : [];
+
+                if (allProducts.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-on-surface-variant font-medium">No products found in the database. Go add some!</td></tr>`;
+                    updateStats({ total: 0, oos: 0, activePercent: 0 });
+                    return;
+                }
+
+                // Populate dynamic categories
+                const filterCategory = document.getElementById('filter-category');
+                const uniqueCategories = [...new Set(allProducts.map(p => p.Category).filter(Boolean))];
+                filterCategory.innerHTML = '<option value="">All Categories</option>';
+                uniqueCategories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+                    filterCategory.appendChild(opt);
+                });
+
+                // Compute Stats
+                const totalSku = allProducts.length;
+                const oos = allProducts.filter(p => (parseInt(p.InStock) || 0) <= 0).length;
+                const active = allProducts.filter(p => p.Featured === 'Active' || p.Featured === 'Published').length;
+                const activePercent = totalSku > 0 ? ((active / totalSku) * 100).toFixed(1) : 0;
+                updateStats({ total: totalSku, oos: oos, activePercent: activePercent });
+
+                applyFilters();
+
+                // Attach listeners
+                document.getElementById('search-input').addEventListener('input', applyFilters);
+                filterCategory.addEventListener('change', applyFilters);
+                document.getElementById('filter-status').addEventListener('change', applyFilters);
+
+            } catch (error) {
+                console.error("Failed to load products:", error);
+                tableBody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-error font-medium">Failed to load products. Double check the APPS_SCRIPT_URL.</td></tr>`;
+            }
+        });
+
+        // Globals for state
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentPage = 1;
+        const pageSize = 10;
+
+        function updateStats(stats) {
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-oos').textContent = stats.oos;
+            document.getElementById('stat-active').textContent = stats.activePercent + "%";
+        }
+
+        function applyFilters() {
+            const searchTxt = (document.getElementById('search-input').value || "").toLowerCase();
+            const selCat = document.getElementById('filter-category').value;
+            const selStatus = document.getElementById('filter-status').value;
+
+            filteredProducts = allProducts.filter(p => {
+                const matchesSearch = (p.ProductName || "").toLowerCase().includes(searchTxt) ||
+                    (p.SubCategory || "").toLowerCase().includes(searchTxt);
+                const matchesCategory = selCat === "" || p.Category === selCat;
+                const matchesStatus = selStatus === "" || p.Featured === selStatus;
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('product-table-body');
+            tableBody.innerHTML = '';
+
+            if (filteredProducts.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-on-surface-variant font-medium">No products match your filters.</td></tr>`;
+                document.getElementById('pagination-range').textContent = "0-0";
+                document.getElementById('pagination-total').textContent = "0";
+                document.getElementById('pagination-controls').innerHTML = '';
+                return;
+            }
+
+            const startIdx = (currentPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, filteredProducts.length);
+            const currentBatch = filteredProducts.slice(startIdx, endIdx);
+
+            currentBatch.forEach(product => {
+                const stock = parseInt(product.InStock) || 0;
+                let stockBarColor = "bg-primary";
+                let stockWidth = "w-full";
+                let stockTextColor = "text-on-surface";
+
+                if (stock === 0) {
+                    stockBarColor = "bg-error"; stockWidth = "w-0"; stockTextColor = "text-error font-bold";
+                } else if (stock < 20) {
+                    stockBarColor = "bg-tertiary"; stockWidth = "w-1/4"; stockTextColor = "text-tertiary";
+                }
+
+                const imageHtml = product.ImageURL && product.ImageURL.trim() !== ""
+                    ? `<img src="${product.ImageURL}" alt="${product.ProductName}" class="w-full h-full object-cover rounded-lg" onerror="this.outerHTML='<span class=\\'material-symbols-outlined text-outline\\'>inventory_2</span>'"/>`
+                    : `<span class="material-symbols-outlined text-outline">inventory_2</span>`;
+
+                const rowHTML = `
+                    <tr class="hover:bg-surface-bright transition-colors group">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-lg bg-surface-container-high flex flex-shrink-0 items-center justify-center overflow-hidden">
+                                    ${imageHtml}
+                                </div>
+                                <div>
+                                    <div class="font-headline font-bold text-on-surface text-sm">${product.ProductName || "Unnamed"}</div>
+                                    <div class="text-xs text-on-surface-variant">Sub: ${product.SubCategory || "N/A"}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6"><span class="text-sm font-medium text-secondary">${product.Category || "None"}</span></td>
+                        <td class="px-8 py-6"><span class="text-sm font-headline font-bold">₹${parseFloat(product.Price || 0).toFixed(2)}</span></td>
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                                    <div class="h-full ${stockBarColor} ${stockWidth}"></div>
+                                </div>
+                                <span class="text-xs font-semibold ${stockTextColor}">${stock} units</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-[11px] font-bold uppercase tracking-wider">
+                                <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>${product.Featured || "Active"}
+                            </span>
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <a href="add-newproduct.html?edit=${product.productId}" class="text-on-surface-variant hover:text-primary transition-colors inline-block">
+                                <span class="material-symbols-outlined" data-icon="edit">edit</span>
+                            </a>
+                        </td>
+                    </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+
+            document.getElementById('pagination-range').textContent = `${startIdx + 1}-${endIdx}`;
+            document.getElementById('pagination-total').textContent = filteredProducts.length;
+
+            renderPaginationControls();
+        }
+
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(filteredProducts.length / pageSize);
+            const controlsContainer = document.getElementById('pagination-controls');
+            controlsContainer.innerHTML = '';
+
+            const prevDisabled = currentPage === 1;
+            controlsContainer.innerHTML += `
+                <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high disabled:opacity-30 disabled:hover:bg-transparent" 
+                    ${prevDisabled ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">
+                    <span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+                </button>
+            `;
+
+            for (let p = 1; p <= totalPages; p++) {
+                if (p === currentPage) {
+                    controlsContainer.innerHTML += `<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold text-sm">${p}</button>`;
+                } else if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                    controlsContainer.innerHTML += `<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high font-bold text-sm" onclick="goToPage(${p})">${p}</button>`;
+                } else if (p === currentPage - 2 || p === currentPage + 2) {
+                    controlsContainer.innerHTML += `<span class="mx-1 text-on-surface-variant">...</span>`;
+                }
+            }
+
+            const nextDisabled = currentPage === totalPages;
+            controlsContainer.innerHTML += `
+                <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high disabled:opacity-30 disabled:hover:bg-transparent" 
+                    ${nextDisabled ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">
+                    <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+                </button>
+            `;
+        }
+
+        // Handle Generate JSON Button
+        const generateJsonBtn = document.getElementById('generate-json-btn');
+        if (generateJsonBtn) {
+            generateJsonBtn.addEventListener('click', async () => {
+                const originalText = generateJsonBtn.innerHTML;
+                generateJsonBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Publishing...`;
+                generateJsonBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${APPS_SCRIPT_URL}?action=generateCatalogJson`);
+                    const result = await response.json();
+
+                    if (result.status === "success" && result.data) {
+                        // Create and download the JSON file
+                        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(result.data, null, 2));
+                        const downloadAnchorNode = document.createElement('a');
+                        downloadAnchorNode.setAttribute("href", dataStr);
+                        downloadAnchorNode.setAttribute("download", "product-catalog.json");
+                        document.body.appendChild(downloadAnchorNode);
+                        downloadAnchorNode.click();
+                        downloadAnchorNode.remove();
+                        alert(`JSON Generated successfully! Included ${result.data.count} products.`);
+                    } else {
+                        alert("Failed to generate JSON. Check console for details.");
+                    }
+                } catch (e) {
+                    console.error("Error generating JSON:", e);
+                    alert("Error communicating with Google Apps Script.");
+                } finally {
+                    generateJsonBtn.innerHTML = originalText;
+                    generateJsonBtn.disabled = false;
+                }
+            });
+        }
+    </script>
+    </main>
+</body>
+
+</html>

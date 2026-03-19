@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Add New Product | Tradelite Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#021945",
+                        "on-secondary-fixed-variant": "#344573",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#b4c5fb",
+                        "primary-fixed": "#dae2ff",
+                        "surface-bright": "#f8f9fb",
+                        "on-surface": "#191c1e",
+                        "surface-container": "#edeef0",
+                        "on-background": "#191c1e",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c3c6d6",
+                        "on-primary-fixed": "#001848",
+                        "secondary": "#4c5d8d",
+                        "surface-dim": "#d9dadc",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "primary": "#003d9b",
+                        "secondary-container": "#b6c8fe",
+                        "primary-container": "#0052cc",
+                        "surface-container-low": "#f3f4f6",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed": "#dae2ff",
+                        "on-tertiary-container": "#ffc6b2",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-surface": "#2e3132",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "tertiary": "#7b2600",
+                        "on-error-container": "#93000a",
+                        "surface": "#f8f9fb",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "background": "#f8f9fb",
+                        "on-primary-container": "#c4d2ff",
+                        "on-secondary-container": "#415382",
+                        "surface-container-high": "#e7e8ea",
+                        "surface-tint": "#0c56d0",
+                        "surface-container-highest": "#e1e2e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#434654",
+                        "inverse-on-surface": "#f0f1f3",
+                        "tertiary-container": "#a33500",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "surface-variant": "#e1e2e4",
+                        "outline": "#737685",
+                        "error-container": "#ffdad6"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fb;
+            color: #191c1e;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface min-h-screen">
+    <!-- SideNavBar Component -->
+    <aside
+        class="flex flex-col fixed left-0 top-0 h-full py-6 px-4 h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-950 font-['Inter'] text-sm font-medium z-40">
+        <div class="mb-10 px-4">
+            <h1 class="text-2xl font-bold text-blue-900 dark:text-blue-50 tracking-tight">Tradelite</h1>
+            <p class="text-xs text-slate-500 font-normal">Enterprise Admin</p>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="admin-dashboard.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span>Overview</span>
+            </a>
+            <a class="bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-100 rounded-lg px-4 py-2 flex items-center gap-3"
+                href="products.html">
+                <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                <span>Catalog</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="order-management.html">
+                <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                <span>Sales</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="employees.html">
+                <span class="material-symbols-outlined" data-icon="badge">badge</span>
+                <span>Employees</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="group">group</span>
+                <span>Customers</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span>Settings</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+                <span>Support</span>
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-slate-200/50 pt-4">
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2 flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+    <!-- Main Content Area -->
+    <main class="ml-64 min-h-screen">
+        <!-- TopAppBar Component -->
+        <header
+            class="fixed top-0 right-0 left-64 z-30 glass-nav h-16 flex items-center justify-between px-8 shadow-sm">
+            <div class="flex items-center gap-4">
+                <h2 class="font-['Manrope'] font-bold text-lg tracking-tight text-on-surface">Add New Product</h2>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-3 text-outline text-sm"
+                        data-icon="search">search</span>
+                    <input
+                        class="bg-surface-container-high border-none rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all"
+                        placeholder="Search resources..." type="text" />
+                </div>
+                <div class="flex items-center gap-4 text-slate-500">
+                    <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors"
+                        data-icon="notifications">notifications</span>
+                    <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors"
+                        data-icon="help_outline">help_outline</span>
+                    <div
+                        class="h-8 w-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">
+                        AD
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Form Content -->
+        <div class="pt-24 pb-12 px-8 max-w-6xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 id="page-title" class="text-3xl font-extrabold text-on-surface font-headline tracking-tight">
+                        Create Listing</h3>
+                    <p id="page-desc" class="text-on-surface-variant mt-1">Configure your product's core details and
+                        inventory metrics.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="px-5 py-2.5 rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                        Discard
+                    </button>
+                    <button id="save-product-btn"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-white bg-gradient-to-br from-primary to-primary-container shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                        Save Product
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-8">
+                <!-- Left Column: Primary Details -->
+                <div class="col-span-8 space-y-8">
+                    <!-- General Information Card -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                        <div class="mb-6">
+                            <h4
+                                class="text-xs font-bold uppercase tracking-widest text-on-surface-variant opacity-70 mb-1">
+                                Information</h4>
+                            <h3 class="text-xl font-bold text-on-surface">General Details</h3>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Product Name</label>
+                                <input id="product-name"
+                                    class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface placeholder:text-outline transition-all"
+                                    placeholder="e.g. Premium Wireless Headphones" type="text" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-on-surface mb-2">Category</label>
+                                    <select id="product-category"
+                                        class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface transition-all appearance-none cursor-pointer">
+                                        <option value="">Select Category</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Men">Men</option>
+                                        <option value="Kids">Kids</option>
+                                        <option value="Accessories">Accessories</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-on-surface mb-2">SubCategory</label>
+                                    <select id="product-subcategory"
+                                        class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface transition-all appearance-none cursor-pointer">
+                                        <option value="">Select SubCategory</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Description</label>
+                                <textarea id="product-desc"
+                                    class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface placeholder:text-outline transition-all resize-none"
+                                    placeholder="Provide a detailed description of the product features and specifications..."
+                                    rows="5"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Pricing & Inventory Grid -->
+                    <div class="grid grid-cols-2 gap-8">
+                        <!-- Pricing Card -->
+                        <section
+                            class="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                            <div class="mb-6 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary"
+                                    data-icon="payments">payments</span>
+                                <h3 class="text-lg font-bold text-on-surface">Pricing</h3>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Selling Price
+                                    (INR)</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-3.5 text-on-surface-variant font-medium">₹</span>
+                                    <input id="product-price"
+                                        class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 pl-8 pr-4 text-on-surface font-semibold transition-all"
+                                        placeholder="0.00" type="number" />
+                                </div>
+                                <p class="text-[11px] text-on-surface-variant mt-2 leading-relaxed italic">Base price
+                                    visible to customers in the storefront.</p>
+                            </div>
+                        </section>
+                        <!-- Stock Card -->
+                        <section
+                            class="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                            <div class="mb-6 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-tertiary"
+                                    data-icon="inventory">inventory</span>
+                                <h3 class="text-lg font-bold text-on-surface">Availability</h3>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Stock Quantity</label>
+                                <input id="product-stock"
+                                    class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface font-semibold transition-all"
+                                    placeholder="0" type="number" />
+                                <div class="mt-4 flex items-center gap-3">
+                                    <input
+                                        class="w-4 h-4 text-primary bg-surface-container-high border-none rounded focus:ring-primary"
+                                        id="stock-track" type="checkbox" />
+                                    <label class="text-xs text-on-surface-variant" for="stock-track">Track inventory
+                                        levels automatically</label>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!-- Right Column: Media & Categorization -->
+                <div class="col-span-4 space-y-8">
+                    <!-- Media Card -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-on-surface">Product Media</h3>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-on-surface mb-2">Image URL</label>
+                            <input id="product-image"
+                                class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-on-surface placeholder:text-outline transition-all"
+                                placeholder="https://example.com/image.jpg" type="url" />
+                        </div>
+                        <div
+                            class="border-2 border-dashed border-outline-variant/30 rounded-lg p-6 flex flex-col items-center justify-center text-center group hover:border-primary/50 hover:bg-surface-container transition-all cursor-pointer">
+                            <div
+                                class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-primary"
+                                    data-icon="cloud_upload">cloud_upload</span>
+                            </div>
+                            <p class="text-sm font-bold text-on-surface mb-1">Drop product image</p>
+                            <p class="text-xs text-on-surface-variant">or click to browse files</p>
+                            <p class="text-[10px] text-outline mt-4">JPG, PNG, WebP up to 5MB</p>
+                        </div>
+                        <div class="mt-4 grid grid-cols-3 gap-2">
+                            <div
+                                class="aspect-square bg-surface-container-low rounded border border-outline-variant/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-outline-variant text-sm"
+                                    data-icon="image">image</span>
+                            </div>
+                            <div
+                                class="aspect-square bg-surface-container-low rounded border border-outline-variant/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-outline-variant text-sm"
+                                    data-icon="image">image</span>
+                            </div>
+                            <div
+                                class="aspect-square border-2 border-dashed border-outline-variant/20 rounded flex items-center justify-center">
+                                <span class="material-symbols-outlined text-outline-variant text-sm"
+                                    data-icon="add">add</span>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Status & Tags Card -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-on-surface">Organization</h3>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Publish Status</label>
+                                <div class="flex items-center gap-2 p-1 bg-surface-container-low rounded-lg">
+                                    <button
+                                        class="flex-1 py-1.5 text-xs font-bold rounded bg-surface-container-lowest text-primary shadow-sm">Draft</button>
+                                    <button
+                                        class="flex-1 py-1.5 text-xs font-medium text-on-surface-variant">Active</button>
+                                    <button
+                                        class="flex-1 py-1.5 text-xs font-medium text-on-surface-variant">Archived</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-on-surface mb-2">Search Tags</label>
+                                <input id="product-tags"
+                                    class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 text-xs transition-all"
+                                    placeholder="Add tags (comma separated)..." type="text" />
+                                <div class="flex flex-wrap gap-2 mt-3">
+                                    <span
+                                        class="px-2.5 py-1 bg-secondary-container/30 text-on-secondary-container text-[10px] font-bold rounded-full flex items-center gap-1">
+                                        Wireless <span class="material-symbols-outlined text-[12px] cursor-pointer"
+                                            data-icon="close">close</span>
+                                    </span>
+                                    <span
+                                        class="px-2.5 py-1 bg-secondary-container/30 text-on-secondary-container text-[10px] font-bold rounded-full flex items-center gap-1">
+                                        Audio <span class="material-symbols-outlined text-[12px] cursor-pointer"
+                                            data-icon="close">close</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Admin Helper -->
+                    <div class="p-6 bg-primary-fixed/30 rounded-xl border border-primary-fixed-dim/50">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary text-xl" data-icon="info">info</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-on-primary-fixed mb-1">Quality Check</h4>
+                                <p class="text-xs text-on-primary-fixed-variant leading-relaxed">Ensure high-resolution
+                                    images are used for catalog displays to increase customer conversion rates by up to
+                                    40%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vanilla JS Integration with Google Apps Script -->
+    <script>
+        // ⚠️ PASTE YOUR WEB APP URL BELOW:
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+
+        // Dynamic Loading of SubCategories from Google Sheets
+        let categoryMapping = {
+            "Women": ["Kurtis", "Sarees", "Dupattas", "Suits", "Bottoms"],
+            "Men": ["Shirts", "Ethnic Wear", "Bottomwear", "Casuals"],
+            "Kids": ["Ethnic Wear", "Frocks", "Boys Wear", "Accessories"],
+            "Accessories": ["Jewellery", "Bags", "Footwear"]
+        }; // Default Fallback
+
+        const categorySelect = document.getElementById('product-category');
+        const subCategorySelect = document.getElementById('product-subcategory');
+
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${APPS_SCRIPT_URL}?action=getCategories`);
+                const result = await response.json();
+
+                if (result.status === "success" && result.data && Object.keys(result.data).length > 0) {
+                    categoryMapping = result.data;
+
+                    // Re-populate the Category dropdown from the live Sheet data
+                    categorySelect.innerHTML = '<option value="">Select Category</option>';
+                    Object.keys(categoryMapping).forEach(cat => {
+                        const opt = document.createElement('option');
+                        opt.value = cat;
+                        opt.textContent = cat;
+                        categorySelect.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                console.error("Using fallback categories (failed to fetch from Google Sheets):", err);
+            }
+        }
+
+        loadCategories();
+
+        categorySelect.addEventListener('change', (e) => {
+            const category = e.target.value;
+            subCategorySelect.innerHTML = '<option value="">Select SubCategory</option>';
+
+            if (category && categoryMapping[category]) {
+                categoryMapping[category].forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subCategorySelect.appendChild(opt);
+                });
+            }
+        });
+
+        // ==========================================
+        // EDIT PRODUCT LOGIC
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        if (editId) {
+            document.getElementById('page-title').innerText = "Edit Product";
+            document.getElementById('page-desc').innerText = "Update existing product details.";
+            document.getElementById('save-product-btn').innerHTML = `<span class="material-symbols-outlined" data-icon="save">save</span> Update Product`;
+
+            // Fetch product to prefill
+            fetch(`${APPS_SCRIPT_URL}?action=getProducts`)
+                .then(res => res.json())
+                .then(products => {
+                    const productToEdit = products.find(p => p.productId === editId || p.ProductID === editId || p[0] === editId);
+                    if (productToEdit) {
+                        document.getElementById('product-name').value = productToEdit.ProductName || productToEdit.name || "";
+                        document.getElementById('product-desc').value = productToEdit.Description || productToEdit.description || "";
+                        document.getElementById('product-price').value = parseFloat(productToEdit.Price || productToEdit.price || 0);
+                        document.getElementById('product-stock').value = parseInt(productToEdit.InStock || productToEdit.inStock || 0);
+                        document.getElementById('product-tags').value = Array.isArray(productToEdit.Tags) ? productToEdit.Tags.join(', ') : (productToEdit.Tags || "");
+                        document.getElementById('product-image').value = productToEdit.ImageURL || productToEdit.images || "";
+
+                        // Handle Category & Subcategory carefully
+                        const cat = productToEdit.Category || productToEdit.category;
+                        const sub = productToEdit.SubCategory || productToEdit.subCategory;
+                        if (cat) {
+                            const catSelect = document.getElementById('product-category');
+                            catSelect.value = cat;
+                            // Trigger change to populate subcategories
+                            catSelect.dispatchEvent(new Event('change'));
+
+                            // Let the DOM update subcategories if loaded statically
+                            setTimeout(() => {
+                                const subSelect = document.getElementById('product-subcategory');
+                                subSelect.value = sub || "";
+                            }, 50);
+                        }
+                    }
+                })
+                .catch(err => console.error("Failed to load product details for editing:", err));
+        }
+
+        // Listen for Save Button clicks
+        document.getElementById('save-product-btn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            const originalText = btn.innerText;
+
+            // 1. Compile form data payload to strictly match your Google Sheet Headers and JSON requirements
+            const payload = {
+                name: document.getElementById('product-name').value,
+                category: document.getElementById('product-category').value,
+                subCategory: document.getElementById('product-subcategory').value,
+                description: document.getElementById('product-desc').value,
+                price: parseFloat(document.getElementById('product-price').value) || 0,
+                inStock: parseInt(document.getElementById('product-stock').value) || 10,
+                tags: document.getElementById('product-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                ImageURL: document.getElementById('product-image').value,
+                featured: 'Active',
+                status: 'Active'
+            };
+
+            if (editId) {
+                payload.productId = editId; // Inject ID for editProduct action
+            }
+
+            // Basic validation
+            if (!payload.name || !payload.price || !payload.ImageURL) {
+                alert('Please fill out at least the Product Name, Price, and Image URL!');
+                return;
+            }
+
+            if (APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") {
+                alert("Almost there! You need to paste your copied Google Apps Script Web App URL into the Javascript inside add-newproduct.html (around line 311).");
+                return;
+            }
+
+            // 2. Button Visual Feedback
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Very important for Google Apps Script
+                    body: JSON.stringify({
+                        action: editId ? 'editProduct' : 'addProduct',
+                        payload: payload
+                    })
+                });
+
+                // Parse response
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    alert(`Success! Product saved to Google Sheets. (ID: ${result.data.id})`);
+                    // Clear the form to be ready for the next product
+                    document.querySelectorAll('input:not([type="checkbox"]), textarea').forEach(el => el.value = '');
+                } else {
+                    alert("Server Error: " + result.message);
+                }
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                alert("Network Error: Could not reach the Google Apps Script backend. Check console for details.");
+            } finally {
+                // 4. Restore button state
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+    </script>
+</body>
+
+</html>
