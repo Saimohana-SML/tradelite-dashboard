@@ -266,8 +266,8 @@
                                 data-icon="calendar_today">calendar_today</span>
                         </div>
                     </div>
-                    <div class="text-xs font-medium text-on-surface-variant">
-                        Showing <span class="text-on-surface font-bold">1-10</span> of 142 orders
+                    <div id="order-count-info" class="text-xs font-medium text-on-surface-variant">
+                        Showing <span class="text-on-surface font-bold">...</span> orders
                     </div>
                 </div>
                 <!-- Actual Data Table -->
@@ -436,105 +436,144 @@
     </div>
     <!-- Vanilla JS Integration for Fetching Orders -->
     <script>
-        // Use the EXACT same Web App URL that you pasted into add-newproduct.html
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
 
         let allOrders = [];
+        let filteredOrders = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
+            initFilters();
+            await fetchOrders();
+        });
+
+        async function fetchOrders() {
             const tableBody = document.getElementById('order-table-body');
             try {
-                // Fetch orders
                 const url = new URL(APPS_SCRIPT_URL);
                 url.searchParams.append("action", "getOrders");
                 const response = await fetch(url.toString(), { method: 'GET' });
-
-                // createJsonResponse unwraps payload inside .data
                 const result = await response.json();
                 allOrders = result.data ? result.data : (Array.isArray(result) ? result : []);
 
-                tableBody.innerHTML = '';
-
-                if (!allOrders || allOrders.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-medium">No orders found.</td></tr>`;
-                    document.getElementById('pending-tasks-count').innerText = "0";
-                    return;
-                }
-
-                let pendingCount = 0;
-
-                // Reverse slice to show newest orders first
-                allOrders.slice().reverse().forEach(order => {
-                    const orderId = order.Order_ID || "Unknown";
-                    const displayId = orderId.length > 8 ? "#" + orderId.substring(0, 8).toUpperCase() : "#" + orderId;
-                    const customerName = order.Customer_Name || "Guest User";
-
-                    let dateDisplay = "Just now";
-                    if (order.Timestamp) {
-                        try {
-                            const d = new Date(order.Timestamp);
-                            dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: '2-digit', minute: '2-digit' });
-                        } catch (e) { }
-                    }
-
-                    const status = order.Status || "New";
-                    if (status === "New" || status === "Contacted") {
-                        pendingCount++;
-                    }
-                    let statusBg = "bg-secondary-fixed text-on-secondary-fixed";
-
-                    if (status.toLowerCase().includes("contacted")) {
-                        statusBg = "bg-tertiary-fixed text-on-tertiary-fixed-variant";
-                    } else if (status.toLowerCase().includes("close") || status.toLowerCase().includes("complete")) {
-                        statusBg = "bg-green-100 text-green-800";
-                    }
-
-                    const rowHTML = `
-                        <tr class="hover:bg-surface-bright transition-colors group">
-                            <td class="px-6 py-5"><span class="font-bold text-primary-container">${displayId}</span></td>
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden text-xs font-bold text-slate-500">
-                                        ${customerName.charAt(0).toUpperCase()}
-                                    </div>
-                                    <span class="font-semibold text-on-surface">${customerName}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-5 text-sm text-on-surface-variant">${dateDisplay}</td>
-                            <td class="px-6 py-5">
-                                <div class="inline-flex items-center px-1 rounded-full text-xs font-bold ${statusBg}">
-                                    <select data-order-id="${orderId}" onchange="changeOrderStatus(this)" class="appearance-none bg-transparent border-none focus:ring-0 cursor-pointer px-2 py-1 pr-4" style="background-image: none;">
-                                        <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
-                                        <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
-                                        <option value="Closed" ${status === 'Closed' ? 'selected' : ''}>Closed</option>
-                                    </select>
-                                </div>
-                            </td>
-                            <td class="px-6 py-5 text-right">
-                                <button onclick="viewOrderDetails('${order.Order_ID}')" title="View details" class="p-2 text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors tooltip group">
-                                    <span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
-                                </button>
-                            </td>
-                        </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
-                });
-
+                // Update pending count once from all orders
+                const pendingCount = allOrders.filter(o => o.Status === "New" || o.Status === "Contacted").length;
                 document.getElementById('pending-tasks-count').innerText = pendingCount;
 
+                filterAndRender();
             } catch (error) {
                 console.error("Failed to load orders:", error);
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-error font-medium">Failed to load orders. Make sure APPS_SCRIPT_URL is valid.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-error font-medium">Failed to load orders. Check your Google Apps Script connection.</td></tr>`;
             }
-        });
+        }
+
+        function initFilters() {
+            const searchInput = document.querySelector('input[placeholder="Quick search orders..."]');
+            const statusFilter = document.querySelector('select:has(option:contains("All Statuses"))') || document.querySelectorAll('select')[0];
+
+            if (searchInput) {
+                searchInput.addEventListener('input', () => filterAndRender());
+            }
+            if (statusFilter) {
+                statusFilter.addEventListener('change', () => filterAndRender());
+            }
+        }
+
+        function filterAndRender() {
+            const tableBody = document.getElementById('order-table-body');
+            const searchInput = document.querySelector('input[placeholder="Quick search orders..."]');
+            const statusFilter = document.querySelectorAll('select')[0];
+
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+            const statusValue = statusFilter ? statusFilter.value : "All Statuses";
+
+            filteredOrders = allOrders.filter(order => {
+                const matchesSearch =
+                    (order.Order_ID || "").toLowerCase().includes(searchTerm) ||
+                    (order.Customer_Name || "").toLowerCase().includes(searchTerm) ||
+                    (order.Total_Amount || "").toString().includes(searchTerm);
+
+                const matchesStatus = statusValue === "All Statuses" || order.Status === statusValue;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderOrders(filteredOrders);
+        }
+
+        function renderOrders(orders) {
+            const tableBody = document.getElementById('order-table-body');
+            const countInfo = document.getElementById('order-count-info');
+            tableBody.innerHTML = '';
+
+            if (countInfo) {
+                countInfo.innerHTML = `Showing <span class="text-on-surface font-bold">${orders.length}</span> orders`;
+            }
+
+            if (orders.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-medium">No orders match your criteria.</td></tr>`;
+                return;
+            }
+
+            // Show newest first
+            [...orders].reverse().forEach(order => {
+                const orderId = order.Order_ID || "Unknown";
+                const displayId = orderId.length > 8 ? "#" + orderId.substring(0, 8).toUpperCase() : "#" + orderId;
+                const customerName = order.Customer_Name || "Guest User";
+
+                let dateDisplay = "Just now";
+                if (order.Timestamp) {
+                    try {
+                        const d = new Date(order.Timestamp);
+                        dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: '2-digit', minute: '2-digit' });
+                    } catch (e) { }
+                }
+
+                const status = order.Status || "New";
+                let statusBg = "bg-secondary-fixed text-on-secondary-fixed";
+                if (status === "Contacted") {
+                    statusBg = "bg-orange-100 text-orange-800";
+                } else if (status === "Closed") {
+                    statusBg = "bg-green-100 text-green-800";
+                }
+
+                const rowHTML = `
+                    <tr class="hover:bg-surface-bright transition-colors group">
+                        <td class="px-6 py-5"><span class="font-bold text-primary-container">${displayId}</span></td>
+                        <td class="px-6 py-5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500">
+                                    ${customerName.charAt(0).toUpperCase()}
+                                </div>
+                                <span class="font-semibold text-on-surface">${customerName}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 text-sm text-on-surface-variant">${dateDisplay}</td>
+                        <td class="px-6 py-5">
+                            <div class="inline-flex items-center px-1 rounded-full text-xs font-bold ${statusBg}">
+                                <select data-order-id="${orderId}" data-current="${status}" onchange="changeOrderStatus(this)" class="appearance-none bg-transparent border-none focus:ring-0 cursor-pointer px-2 py-1 pr-4" style="background-image: none;">
+                                    <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
+                                    <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                                    <option value="Closed" ${status === 'Closed' ? 'selected' : ''}>Closed</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 text-right">
+                            <button onclick="viewOrderDetails('${order.Order_ID}')" class="p-2 text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </td>
+                    </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
 
         window.changeOrderStatus = async function (selectEl) {
             const orderId = selectEl.getAttribute('data-order-id');
             const newStatus = selectEl.value;
-            const originalValue = selectEl.defaultValue || selectEl.querySelector('option[selected]')?.value;
+            const originalValue = selectEl.getAttribute('data-current');
 
-            // Visual loading state
             selectEl.disabled = true;
-            selectEl.classList.add('opacity-50', 'animate-pulse');
+            selectEl.classList.add('opacity-50');
 
             try {
                 const response = await fetch(APPS_SCRIPT_URL, {
@@ -549,18 +588,25 @@
 
                 const result = await response.json();
                 if (result.status === "success") {
-                    // Refresh styles via reload or manual DOM update
-                    window.location.reload();
+                    // Optimized update: just update the local object and re-render
+                    const targetOrder = allOrders.find(o => o.Order_ID === orderId);
+                    if (targetOrder) targetOrder.Status = newStatus;
+
+                    // Update main counts
+                    const pendingCount = allOrders.filter(o => o.Status === "New" || o.Status === "Contacted").length;
+                    document.getElementById('pending-tasks-count').innerText = pendingCount;
+
+                    filterAndRender();
                 } else {
-                    throw new Error("Backend reported an error");
+                    throw new Error();
                 }
             } catch (err) {
                 console.error("Failed to update status:", err);
-                alert("Could not update order status. Please try again later.");
-                selectEl.value = originalValue; // Revert
+                alert("Could not update order status.");
+                selectEl.value = originalValue;
             } finally {
                 selectEl.disabled = false;
-                selectEl.classList.remove('opacity-50', 'animate-pulse');
+                selectEl.classList.remove('opacity-50');
             }
         }
 
@@ -582,30 +628,23 @@
             document.getElementById('modal-order-date').innerText = dateDisplay;
 
             const total = parseFloat(order.Total_Amount || 0);
-            document.getElementById('modal-order-total').innerText = total > 0 ? "₹" + total.toFixed(2) : "₹0.00";
+            document.getElementById('modal-order-total').innerText = "₹" + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
             const tbody = document.getElementById('modal-items-body');
             tbody.innerHTML = '';
 
-            // Render items safely
-            let items = [];
-            if (typeof order.Items === "string") {
-                try { items = JSON.parse(order.Items); } catch (e) { }
-            } else if (Array.isArray(order.Items)) {
-                items = order.Items;
-            }
-
+            let items = order.Items || [];
             if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-xs text-on-surface-variant italic">No cart items recorded for this order.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-xs italic">No cart items found.</td></tr>`;
             } else {
                 items.forEach(item => {
-                    const price = parseFloat(item.price || 0).toFixed(2);
+                    const price = parseFloat(item.price || 0);
                     const qty = parseInt(item.quantity || 1);
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-4 py-3 font-semibold text-on-surface">${item.name || "Unknown Product"}</td>
-                            <td class="px-4 py-3 text-right text-on-surface-variant font-bold">x${qty}</td>
-                            <td class="px-4 py-3 text-right text-on-surface font-headline font-bold">₹${price}</td>
+                            <td class="px-4 py-3 text-right font-bold">x${qty}</td>
+                            <td class="px-4 py-3 text-right font-bold">₹${price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                         </tr>
                     `;
                 });
