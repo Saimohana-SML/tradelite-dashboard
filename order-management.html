@@ -165,7 +165,7 @@
                     <span
                         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
                         data-icon="search">search</span>
-                    <input
+                    <input id="order-search"
                         class="bg-slate-100 dark:bg-slate-800/50 border-none rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all"
                         placeholder="Quick search orders..." type="text" />
                 </div>
@@ -243,7 +243,7 @@
                     class="p-6 border-b border-surface-container-low flex flex-wrap gap-4 items-center justify-between">
                     <div class="flex gap-4 items-center">
                         <div class="relative">
-                            <select
+                            <select id="status-filter"
                                 class="appearance-none bg-surface-container-low border-none rounded-lg pl-4 pr-10 py-2 text-sm font-semibold focus:ring-1 focus:ring-primary text-on-surface-variant cursor-pointer">
                                 <option>All Statuses</option>
                                 <option>New</option>
@@ -467,8 +467,8 @@
         }
 
         function initFilters() {
-            const searchInput = document.querySelector('input[placeholder="Quick search orders..."]');
-            const statusFilter = document.querySelector('select:has(option:contains("All Statuses"))') || document.querySelectorAll('select')[0];
+            const searchInput = document.getElementById('order-search');
+            const statusFilter = document.getElementById('status-filter');
 
             if (searchInput) {
                 searchInput.addEventListener('input', () => filterAndRender());
@@ -479,9 +479,8 @@
         }
 
         function filterAndRender() {
-            const tableBody = document.getElementById('order-table-body');
-            const searchInput = document.querySelector('input[placeholder="Quick search orders..."]');
-            const statusFilter = document.querySelectorAll('select')[0];
+            const searchInput = document.getElementById('order-search');
+            const statusFilter = document.getElementById('status-filter');
 
             const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
             const statusValue = statusFilter ? statusFilter.value : "All Statuses";
@@ -558,8 +557,8 @@
                             </div>
                         </td>
                         <td class="px-6 py-5 text-right">
-                            <button onclick="viewOrderDetails('${order.Order_ID}')" class="p-2 text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
-                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            <button onclick="viewOrderDetails('${order.Order_ID}')" title="View details" class="p-2 text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
                             </button>
                         </td>
                     </tr>`;
