@@ -282,7 +282,7 @@
                                             Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-surface-container">
+                                <tbody id="recent-products-body" class="divide-y divide-surface-container">
                                     <tr class="hover:bg-surface-bright transition-colors group">
                                         <td class="px-8 py-5">
                                             <div class="flex items-center gap-3">
@@ -415,57 +415,7 @@
                             <p class="text-xs text-on-surface-variant font-medium">98.2% Order Completion Rate</p>
                         </div>
                     </div>
-                    <!-- Category Summary -->
-                    <div class="bg-surface-container-lowest p-8 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-bold text-on-surface mb-6">Category Mix</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
-                                    <span>Clothing</span>
-                                    <span>20</span>
-                                </div>
-                                <div class="w-full bg-surface-container h-2 rounded-full">
-                                    <div class="bg-primary h-2 rounded-full" style="width: 16%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
-                                    <span>Electronics</span>
-                                    <span>15</span>
-                                </div>
-                                <div class="w-full bg-surface-container h-2 rounded-full">
-                                    <div class="bg-primary h-2 rounded-full" style="width: 12%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
-                                    <span>Accessories</span>
-                                    <span>45</span>
-                                </div>
-                                <div class="w-full bg-surface-container h-2 rounded-full">
-                                    <div class="bg-primary h-2 rounded-full" style="width: 36%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
-                                    <span>Footwear</span>
-                                    <span>24</span>
-                                </div>
-                                <div class="w-full bg-surface-container h-2 rounded-full">
-                                    <div class="bg-primary h-2 rounded-full" style="width: 19%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
-                                    <span>Home Decor</span>
-                                    <span>20</span>
-                                </div>
-                                <div class="w-full bg-surface-container h-2 rounded-full">
-                                    <div class="bg-primary h-2 rounded-full" style="width: 16%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Category Summary Removed per User Request -->
                 </div>
             </div>
         </div>
@@ -490,11 +440,56 @@
                 const urlProducts = new URL(APPS_SCRIPT_URL);
                 urlProducts.searchParams.append("action", "getProducts");
                 fetch(urlProducts.toString()).then(res => res.json()).then(result => {
-                    const products = result.data || [];
+                    const products = result.data ? result.data : (result.catalog ? result.catalog : []);
                     document.getElementById('stat-products').innerText = products.length;
-                    const oosCount = products.filter(p => p.InStock === "No" || p.InStock === false).length;
+
+                    const oosCount = products.filter(p => p.availability === "Out of Stock").length;
                     document.getElementById('stat-oos').innerText = oosCount;
                     document.getElementById('stat-active-products').innerText = products.length - oosCount;
+
+                    // Update Recent Products Table (Last 5)
+                    const tableBody = document.getElementById('recent-products-body');
+                    tableBody.innerHTML = '';
+
+                    if (products.length === 0) {
+                        tableBody.innerHTML = `<tr><td colspan="5" class="px-8 py-6 text-center text-on-surface-variant">No products found.</td></tr>`;
+                        return;
+                    }
+
+                    // Sort by newest if there's an ID or just take last 5
+                    const recent = products.slice(-5).reverse();
+                    recent.forEach(product => {
+                        const price = parseFloat(product.price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                        const isOOS = product.availability === "Out of Stock";
+                        const statusColor = isOOS ? "bg-error-container text-on-error-container" : "bg-tertiary-fixed text-on-tertiary-fixed-variant";
+                        const dotColor = isOOS ? "bg-error" : "bg-tertiary-container";
+                        const statusLabel = isOOS ? "Inactive" : "Active";
+                        const stockColor = isOOS ? "text-error font-medium" : "text-on-surface-variant";
+
+                        tableBody.innerHTML += `
+                            <tr class="hover:bg-surface-bright transition-colors group">
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center overflow-hidden">
+                                            ${product.images && product.images.length > 0 ?
+                                `<img src="${product.images[0]}" class="w-full h-full object-cover" />` :
+                                `<span class="material-symbols-outlined" data-icon="image">image</span>`}
+                                        </div>
+                                        <span class="text-sm font-semibold text-on-surface">${product.name}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-5 text-sm text-on-surface-variant">${product.category}</td>
+                                <td class="px-4 py-5 text-sm font-bold text-on-surface">₹${price}</td>
+                                <td class="px-4 py-5 text-sm ${stockColor}">${product.availability}</td>
+                                <td class="px-8 py-5">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${statusColor}">
+                                        <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
+                                        ${statusLabel}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
                 });
 
                 // Fetch Orders
