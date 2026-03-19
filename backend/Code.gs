@@ -357,7 +357,6 @@ function addEmployee(payload) {
     payload.name || "Unknown",
     payload.mobile || "",
     payload.email || "",
-    payload.role || "Sales Representative",
     payload.status || "Active",
     new Date()
   ];
@@ -395,8 +394,8 @@ function getSheetByName(sheetName) {
       sheet.appendRow(["Kids", "Ethnic Wear, Frocks, Boys Wear, Accessories"]);
       sheet.appendRow(["Accessories", "Jewellery, Bags, Footwear"]);
     } else if (sheetName === SHEET_EMPLOYEES) {
-      sheet.appendRow(["Employee_ID", "Name", "Mobile", "Email", "Role", "Status", "JoinedDate"]);
-      sheet.getRange(1, 1, 1, 7).setFontWeight("bold");
+      sheet.appendRow(["Employee_ID", "Name", "Mobile", "Email", "Status", "JoinedDate"]);
+      sheet.getRange(1, 1, 1, 6).setFontWeight("bold");
     }
     
     // Freeze the top row so headers stay visible when scrolling

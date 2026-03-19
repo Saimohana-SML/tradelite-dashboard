@@ -148,15 +148,12 @@
                                     Email</th>
                                 <th
                                     class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                                    Role</th>
-                                <th
-                                    class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                                     Joined</th>
                             </tr>
                         </thead>
                         <tbody id="employee-table-body" class="divide-y divide-surface-variant/50">
                             <tr>
-                                <td colspan="5"
+                                <td colspan="4"
                                     class="px-8 py-10 text-center text-on-surface-variant font-medium animate-pulse">
                                     Loading employees...
                                 </td>
@@ -199,15 +196,6 @@
                         class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm"
                         placeholder="rahul@tradelite.in" />
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Role / Designation</label>
-                    <select id="emp-role"
-                        class="w-full py-2.5 px-3 bg-surface-container-lowest border rounded-lg focus:ring-2 focus:ring-primary/20 text-sm">
-                        <option value="Sales Representative">Sales Representative</option>
-                        <option value="Regional Manager">Regional Manager</option>
-                        <option value="Account Executive">Account Executive</option>
-                    </select>
-                </div>
                 <div class="pt-4">
                     <button type="submit" id="submit-emp-btn"
                         class="w-full py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:bg-primary-container transition-all">
@@ -239,7 +227,7 @@
                 document.getElementById('stat-active').innerText = employees.filter(e => e.Status === "Active").length;
 
                 if (employees.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" class="px-8 py-10 text-center text-on-surface-variant">No employees registered yet.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="4" class="px-8 py-10 text-center text-on-surface-variant">No employees registered yet.</td></tr>`;
                     return;
                 }
 
@@ -264,11 +252,6 @@
                             </td>
                             <td class="px-8 py-6 text-sm font-medium text-on-surface-variant">${emp.Mobile || "-"}</td>
                             <td class="px-8 py-6 text-sm">${emp.Email || "-"}</td>
-                            <td class="px-8 py-6">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-fixed text-on-secondary-fixed rounded-full text-[11px] font-bold tracking-wider">
-                                    ${emp.Role || "Sales Rep"}
-                                </span>
-                            </td>
                             <td class="px-8 py-6 text-sm text-on-surface-variant">${dateDisplay}</td>
                         </tr>
                     `;
@@ -277,7 +260,7 @@
 
             } catch (err) {
                 console.error("Failed to fetch employees:", err);
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-8 py-10 text-center text-error">Failed to load data.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4" class="px-8 py-10 text-center text-error">Failed to load data.</td></tr>`;
             }
         }
 
@@ -299,8 +282,7 @@
             const payload = {
                 name: document.getElementById('emp-name').value,
                 mobile: document.getElementById('emp-mobile').value,
-                email: document.getElementById('emp-email').value,
-                role: document.getElementById('emp-role').value
+                email: document.getElementById('emp-email').value
             };
 
             try {
