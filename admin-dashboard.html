@@ -201,7 +201,7 @@
                         </div>
                         <div class="mt-4">
                             <p class="text-on-surface-variant text-sm font-medium">Total Products</p>
-                            <h3 class="text-3xl font-bold text-on-surface mt-1">124</h3>
+                            <h3 id="stat-products" class="text-3xl font-bold text-on-surface mt-1">...</h3>
                         </div>
                     </div>
                     <!-- Card 2 -->
@@ -215,7 +215,7 @@
                         </div>
                         <div class="mt-4">
                             <p class="text-on-surface-variant text-sm font-medium">Active Products</p>
-                            <h3 class="text-3xl font-bold text-on-surface mt-1">118</h3>
+                            <h3 id="stat-active-products" class="text-3xl font-bold text-on-surface mt-1">...</h3>
                         </div>
                     </div>
                     <!-- Card 3 (Highlight Out of Stock) -->
@@ -231,7 +231,7 @@
                         </div>
                         <div class="mt-4">
                             <p class="text-on-surface-variant text-sm font-medium">Out of Stock</p>
-                            <h3 class="text-3xl font-bold text-error mt-1">6</h3>
+                            <h3 id="stat-oos" class="text-3xl font-bold text-error mt-1">...</h3>
                         </div>
                     </div>
                     <!-- Card 4 -->
@@ -244,7 +244,7 @@
                         </div>
                         <div class="mt-4">
                             <p class="text-on-surface-variant text-sm font-medium">Total Orders</p>
-                            <h3 class="text-3xl font-bold text-on-surface mt-1">892</h3>
+                            <h3 id="stat-orders" class="text-3xl font-bold text-on-surface mt-1">...</h3>
                         </div>
                     </div>
                 </div>
@@ -391,22 +391,24 @@
                                     <div class="w-2 h-2 rounded-full bg-primary"></div>
                                     <span class="text-sm font-semibold text-on-surface">New Orders</span>
                                 </div>
-                                <span class="text-sm font-bold bg-primary-fixed px-3 py-1 rounded-full">12</span>
+                                <span id="stat-orders-new"
+                                    class="text-sm font-bold bg-primary-fixed px-3 py-1 rounded-full">...</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
                                     <div class="w-2 h-2 rounded-full bg-secondary"></div>
                                     <span class="text-sm font-semibold text-on-surface">Contacted</span>
                                 </div>
-                                <span class="text-sm font-bold bg-secondary-fixed px-3 py-1 rounded-full">8</span>
+                                <span id="stat-orders-contacted"
+                                    class="text-sm font-bold bg-secondary-fixed px-3 py-1 rounded-full">...</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
                                     <div class="w-2 h-2 rounded-full bg-tertiary-container"></div>
                                     <span class="text-sm font-semibold text-on-surface">Closed</span>
                                 </div>
-                                <span
-                                    class="text-sm font-bold bg-surface-container-highest px-3 py-1 rounded-full">872</span>
+                                <span id="stat-orders-closed"
+                                    class="text-sm font-bold bg-surface-container-highest px-3 py-1 rounded-full">...</span>
                             </div>
                         </div>
                         <div class="mt-8 pt-6 border-t border-surface-container text-center">
@@ -477,6 +479,55 @@
             class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-semibold whitespace-nowrap">Add
             Product</span>
     </button>
+
+    <!-- Script to fetch stats -->
+    <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch Products
+                const urlProducts = new URL(APPS_SCRIPT_URL);
+                urlProducts.searchParams.append("action", "getProducts");
+                fetch(urlProducts.toString()).then(res => res.json()).then(result => {
+                    const products = result.data || [];
+                    document.getElementById('stat-products').innerText = products.length;
+                    const oosCount = products.filter(p => p.InStock === "No" || p.InStock === false).length;
+                    document.getElementById('stat-oos').innerText = oosCount;
+                    document.getElementById('stat-active-products').innerText = products.length - oosCount;
+                });
+
+                // Fetch Orders
+                const urlOrders = new URL(APPS_SCRIPT_URL);
+                urlOrders.searchParams.append("action", "getOrders");
+                fetch(urlOrders.toString()).then(res => res.json()).then(result => {
+                    const orders = result.data ? result.data : (Array.isArray(result) ? result : []);
+                    document.getElementById('stat-orders').innerText = orders.length;
+
+                    let newCount = 0;
+                    let contactedCount = 0;
+                    let closedCount = 0;
+
+                    orders.forEach(o => {
+                        const status = (o.Status || "New").toLowerCase();
+                        if (status.includes("new")) {
+                            newCount++;
+                        } else if (status.includes("contacted")) {
+                            contactedCount++;
+                        } else {
+                            closedCount++;
+                        }
+                    });
+
+                    document.getElementById('stat-orders-new').innerText = newCount;
+                    document.getElementById('stat-orders-contacted').innerText = contactedCount;
+                    document.getElementById('stat-orders-closed').innerText = closedCount;
+                });
+            } catch (err) {
+                console.error("Error fetching dashboard stats:", err);
+            }
+        });
+    </script>
 </body>
 
 </html>
