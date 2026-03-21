@@ -166,12 +166,16 @@ function sheetToObjects(sheetName, idColumnName) {
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    // SKIP EMPTY ROWS: If the primary ID column is empty, ignore this row
+
+    // Always skip completely empty rows (all cells blank)
+    const isRowEmpty = row.every(cell => cell === null || cell === undefined || cell.toString().trim() === "");
+    if (isRowEmpty) continue;
+
+    // If we found the ID column, skip rows where the ID cell is empty
     if (idIndex !== -1 && (!row[idIndex] || row[idIndex].toString().trim() === "")) continue;
 
     const obj = {};
     headers.forEach((header, index) => {
-      // Create camelCase-ish keys for the object
       const key = header.toString().replace(/ /g, "_");
       obj[key] = row[index];
     });
