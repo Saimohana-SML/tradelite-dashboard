@@ -5,49 +5,109 @@ const SHEET_CATEGORIES = "Categories";
 const SHEET_EMPLOYEES = "Employees";
 
 /**
- * Handle GET Requests
- * Used for fetching data from Google Sheets (e.g. loading the product list).
- * Example URL: https://script.google.com/.../exec?action=getProducts
+ * Main GET handler. 
+ * Can serve HTML pages OR JSON data based on parameters.
  */
 function doGet(e) {
-  // Always include CORS headers for frontend integration
-  const action = e.parameter.action;
-  
-  try {
-    if (action === "getProducts") {
-      return createJsonResponse(getProducts());
-    } else if (action === "getOrders") {
-      return createJsonResponse(getOrders()); 
-    } else if (action === "getCategories") {
-      return createJsonResponse(getCategories());
-    } else if (action === "generateCatalogJson") {
-      return createJsonResponse(generateCatalogJson());
-    } else if (action === "getEmployees") {
-      return createJsonResponse(getEmployees());
-    } else {
-      return createJsonResponse({ status: "error", message: "Invalid action parameter" }, 400);
+  var action = e.parameter.action;
+  var page = e.parameter.page || 'admin-dashboard'; // Default page
+
+  // If there's an action, it's a DATA request (read OR write via GET)
+  if (action) {
+    try {
+      var result;
+      switch (action) {
+        // ── READ actions ──
+        case 'getProducts':         result = getProducts(); break;
+        case 'getOrders':           result = getOrders(); break;
+        case 'getEmployees':        result = getEmployees(); break;
+        case 'getCategories':       result = getCategories(); break;
+        case 'generateCatalogJson': result = generateCatalogJson(); break;
+
+        // ── WRITE actions via GET (avoids POST→redirect→GET body-drop bug) ──
+        case 'addProduct': {
+          var payload = JSON.parse(e.parameter.payload || '{}');
+          result = addProduct(payload);
+          break;
+        }
+        case 'editProduct': {
+          var payload = JSON.parse(e.parameter.payload || '{}');
+          result = editProduct(payload);
+          break;
+        }
+        case 'addEmployee': {
+          var payload = JSON.parse(e.parameter.payload || '{}');
+          result = addEmployee(payload);
+          break;
+        }
+        case 'addOrder': {
+          var payload = JSON.parse(e.parameter.payload || '{}');
+          result = addOrder(payload);
+          break;
+        }
+        case 'updateOrderStatus': {
+          var payload = JSON.parse(e.parameter.payload || '{}');
+          result = updateOrderStatus(payload);
+          break;
+        }
+
+        default: return createJsonResponse({ status: 'error', message: 'Unknown action: ' + action });
+      }
+      return createJsonResponse({ status: 'success', data: result });
+    } catch (err) {
+      return createJsonResponse({ status: 'error', message: err.toString() });
     }
-  } catch (error) {
-    return createJsonResponse({ status: "error", message: error.toString() }, 500);
+  }
+
+  // Otherwise, it's a PAGE request
+  try {
+    return HtmlService.createTemplateFromFile(page)
+        .evaluate()
+        .setTitle('TradeLite Business Suite')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (err) {
+    return HtmlService.createHtmlOutput("<h1>Error 404</h1><p>Page '" + page + "' not found in Script project.</p><p>Technical Error: " + err.toString() + "</p>");
   }
 }
 
 /**
+ * Helper to include other HTML files
+ */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+/**
+ * Get the main URL of the script
+ */
+function getScriptUrl() {
+  return ScriptApp.getService().getUrl();
+}
+
+/**
+ * Generate a URL for a specific page
+ */
+function getPageUrl(page) {
+  return getScriptUrl() + "?page=" + (page || 'admin-dashboard');
+}
+
+
+
+/**
  * Handle POST Requests
- * Used for receiving form data from the Vanilla JS frontend (e.g. creating a new product).
  */
 function doPost(e) {
   let requestBody;
   
   try {
-    // Parse the incoming JSON body from the frontend fetch() request
     if (e.postData && e.postData.contents) {
       requestBody = JSON.parse(e.postData.contents);
     } else {
       throw new Error("No payload found");
     }
   } catch (error) {
-    return createJsonResponse({ status: "error", message: "Invalid JSON body or empty payload" }, 400);
+    return createJsonResponse({ status: "error", message: "Invalid JSON body" }, 400);
   }
 
   const action = requestBody.action;
@@ -55,20 +115,15 @@ function doPost(e) {
 
   try {
     if (action === "addProduct") {
-      const result = addProduct(payload);
-      return createJsonResponse({ status: "success", data: result });
+      return createJsonResponse({ status: "success", data: addProduct(payload) });
     } else if (action === "editProduct") {
-      const result = editProduct(payload);
-      return createJsonResponse({ status: "success", data: result });
+      return createJsonResponse({ status: "success", data: editProduct(payload) });
     } else if (action === "addOrder") {
-      const result = addOrder(payload);
-      return createJsonResponse({ status: "success", data: result });
+      return createJsonResponse({ status: "success", data: addOrder(payload) });
     } else if (action === "updateOrderStatus") {
-      const result = updateOrderStatus(payload);
-      return createJsonResponse({ status: "success", data: result });
+      return createJsonResponse({ status: "success", data: updateOrderStatus(payload) });
     } else if (action === "addEmployee") {
-      const result = addEmployee(payload);
-      return createJsonResponse({ status: "success", data: result });
+      return createJsonResponse({ status: "success", data: addEmployee(payload) });
     } else {
       return createJsonResponse({ status: "error", message: "Invalid action" }, 400);
     }
@@ -78,17 +133,79 @@ function doPost(e) {
 }
 
 // ==========================================
+// ROBUST DATA HELPERS (NEW)
+// ==========================================
+
+/**
+ * Normalizes a header string (lowercase, removes spaces/underscores) for matching.
+ */
+function normalizeStr(str) {
+  return str.toString().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Finds the index (0-based) of a header in an array.
+ */
+function getHeaderIndex(headers, target) {
+  const normalizedTarget = normalizeStr(target);
+  return headers.findIndex(h => normalizeStr(h) === normalizedTarget);
+}
+
+/**
+ * Converts a sheet's data into an array of objects based on headers.
+ * Automatically filters out rows where the specified 'idColumn' is empty.
+ */
+function sheetToObjects(sheetName, idColumnName) {
+  const sheet = getSheetByName(sheetName);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+
+  const headers = data[0];
+  const idIndex = getHeaderIndex(headers, idColumnName);
+  const results = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    // SKIP EMPTY ROWS: If the primary ID column is empty, ignore this row
+    if (idIndex !== -1 && (!row[idIndex] || row[idIndex].toString().trim() === "")) continue;
+
+    const obj = {};
+    headers.forEach((header, index) => {
+      // Create camelCase-ish keys for the object
+      const key = header.toString().replace(/ /g, "_");
+      obj[key] = row[index];
+    });
+    results.push(obj);
+  }
+  return results;
+}
+
+// ==========================================
 // BUSINESS LOGIC: PRODUCTS
 // ==========================================
 
+function getProducts() {
+  const products = sheetToObjects(SHEET_PRODUCTS, "ProductID");
+  // Ensure every product has the standardized keys the frontend expects
+  return products.map(p => ({
+    productId: p.ProductID || p.ProductID_ || "",
+    name: p.ProductName || p.Name || p.Product_Name || "",
+    price: parseFloat(p.Price || p.Selling_Price || 0),
+    category: p.Category || "",
+    subCategory: p.SubCategory || p.Sub_Category || "",
+    description: p.Description || "",
+    tags: p.Tags ? p.Tags.split(",").map(t => t.trim()) : [],
+    images: p.ImageURL ? p.ImageURL.split(",").map(t => t.trim()) : [],
+    availability: (parseInt(p.InStock || 0) > 0) ? "In Stock" : "Out of Stock",
+    featured: p.Featured || p.Status || "Active",
+    sortOrder: p.SortOrder || ""
+  }));
+}
+
 function addProduct(payload) {
   const sheet = getSheetByName(SHEET_PRODUCTS);
-  
-  // Handle IDs
   const productId = payload.productId || Utilities.getUuid();
   
-  // Map fields directly to the user's 11 exact columns:
-  // ProductID, ProductName, Price, Category, SubCategory, Description, Tags, ImageURL, InStock, Featured, SortOrder
   const newRow = [
     productId,
     payload.name || "",
@@ -103,31 +220,20 @@ function addProduct(payload) {
     payload.sortOrder || ""
   ];
   
-  // Append to the next available row in the Google Sheet
   sheet.appendRow(newRow);
-  
   return { id: productId, message: "Product added successfully" };
 }
 
 function editProduct(payload) {
   const sheet = getSheetByName(SHEET_PRODUCTS);
   const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const idIndex = getHeaderIndex(headers, "ProductID");
   const productId = payload.productId;
   
-  if (!productId) throw new Error("Product ID is required for editing.");
-  
-  // Find the row with matching ID (assuming ID is in Column A, index 0)
-  let rowIndex = -1;
-  for (let i = 1; i < data.length; i++) { // Skip headers
-    if (data[i][0].toString() === productId.toString()) {
-      rowIndex = i + 1; // Apps Script ranges are 1-indexed
-      break;
-    }
-  }
-  
-  if (rowIndex === -1) throw new Error("Product ID not found.");
-  
-  // Create updated row exactly matching the current structure
+  const rowIndex = data.findIndex((row, idx) => idx > 0 && row[idIndex].toString() === productId.toString()) + 1;
+  if (rowIndex <= 0) throw new Error("Product ID not found.");
+
   const updatedRow = [
     productId,
     payload.name || "",
@@ -142,33 +248,8 @@ function editProduct(payload) {
     payload.sortOrder || ""
   ];
   
-  // Write the updated row back to the exact range
-  sheet.getRange(rowIndex, 1, 1, 11).setValues([updatedRow]);
-  
+  sheet.getRange(rowIndex, 1, 1, updatedRow.length).setValues([updatedRow]);
   return { id: productId, message: "Product updated successfully" };
-}
-
-function getProducts() {
-  const sheet = getSheetByName(SHEET_PRODUCTS);
-  const data = sheet.getDataRange().getValues();
-  
-  // If only headers exist (or sheet is completely empty)
-  if (data.length <= 1) return []; 
-  
-  const headers = data[0];
-  const products = [];
-  
-  // Convert 2D array from sheet into JSON objects matching the headers
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const product = {};
-    for (let j = 0; j < headers.length; j++) {
-      // Clean header name e.g., 'Created At' to 'Created_At' or just use as is
-      product[headers[j]] = row[j];
-    }
-    products.push(product);
-  }
-  return products;
 }
 
 // ==========================================
@@ -180,54 +261,23 @@ function getCategories() {
   const data = sheet.getDataRange().getValues();
   const catMap = {};
   
-  for (let i = 0; i < data.length; i++) {
-    const row = data[i];
-    if (!row[0]) continue; // Skip empty rows
-    
-    // SubCategories are expected to be comma separated in column 2
-    const subs = row[1] ? row[1].toString().split(",").map(s => s.trim()).filter(s => s) : [];
-    catMap[row[0].trim()] = subs;
-  }
-  
+  data.forEach(row => {
+    if (row[0]) {
+      const subs = row[1] ? row[1].toString().split(",").map(s => s.trim()).filter(s => s) : [];
+      catMap[row[0].toString().trim()] = subs;
+    }
+  });
   return catMap;
 }
 
 function generateCatalogJson() {
-  const sheet = getSheetByName(SHEET_PRODUCTS);
-  const data = sheet.getDataRange().getValues();
-  
-  if (data.length <= 1) return { lastGenerated: new Date().toISOString(), count: 0, catalog: [] };
-  
-  const products = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    // Filter active products
-    const status = row[9] ? row[9].toString().toLowerCase() : "";
-    if (status !== "active" && status !== "published") continue; 
-    
-    const qty = parseInt(row[8]) || 0;
-    const availabilityStatus = qty > 0 ? "In Stock" : "Out of Stock";
-    
-    products.push({
-      productId: row[0].toString(),
-      name: row[1].toString(),
-      price: parseFloat(row[2]) || 0,
-      category: row[3].toString(),
-      subCategory: row[4].toString(),
-      description: row[5].toString(),
-      tags: row[6].toString() ? row[6].toString().split(',').map(tag => tag.trim()) : [],
-      images: row[7].toString() ? row[7].toString().split(',').map(img => img.trim()) : [],
-      availability: availabilityStatus,
-      featured: status,
-      sortOrder: row[10].toString()
-    });
-  }
+  const allProducts = getProducts();
+  const activeProducts = allProducts.filter(p => ["active", "published"].includes(p.featured.toLowerCase()));
   
   return { 
     lastGenerated: new Date().toISOString(), 
-    count: products.length, 
-    catalog: products 
+    count: activeProducts.length, 
+    catalog: activeProducts 
   };
 }
 
@@ -236,188 +286,95 @@ function generateCatalogJson() {
 // ==========================================
 
 function getOrders() {
-  const sheet = getSheetByName(SHEET_ORDERS);
-  const data = sheet.getDataRange().getValues();
-  
-  if (data.length <= 1) return []; 
-  
-  const headers = data[0];
-  const orders = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const order = {};
-    for (let j = 0; j < headers.length; j++) {
-      order[headers[j]] = row[j];
+  const rawOrders = sheetToObjects(SHEET_ORDERS, "Order_ID");
+  return rawOrders.map(o => {
+    let items = [];
+    if (o.Items_JSON) {
+      try { items = JSON.parse(o.Items_JSON); } catch(e) {}
     }
-    
-    // Automatically parse the JSON items if they exist so frontend receives a proper array
-    if (order["Items_JSON"]) {
-      try {
-        order["Items"] = JSON.parse(order["Items_JSON"]);
-      } catch(e) {
-        order["Items"] = [];
-      }
-    }
-    
-    orders.push(order);
-  }
-  return orders;
+    return {
+      ...o,
+      Items: items
+    };
+  });
 }
 
 function addOrder(payload) {
   const sheet = getSheetByName(SHEET_ORDERS);
   const orderId = Utilities.getUuid();
-  
   const newRow = [
     orderId,
     new Date(),
     payload.customerName || "Unknown",
     payload.status || "New",
-    JSON.stringify(payload.items || []), // Store items array as JSON string
+    JSON.stringify(payload.items || []),
     payload.totalAmount || 0
   ];
-  
   sheet.appendRow(newRow);
-  
-  // ----------------------------------------
-  // INTEGRATION: EMAIL (GmailApp)
-  // ----------------------------------------
-  // Uncomment the lines below to auto-email the admin when a new order arrives!
-  /*
-  const adminEmail = Session.getActiveUser().getEmail(); 
-  const subject = `New Order Received: ${orderId}`;
-  const body = `A new order has been placed by ${payload.customerName}.\nTotal Amount: ₹${payload.totalAmount}`;
-  GmailApp.sendEmail(adminEmail, subject, body);
-  */
-  
-  // ----------------------------------------
-  // INTEGRATION: DOCUMENTS (Google Docs)
-  // ----------------------------------------
-  // You can automatically generate an invoice document using DocumentApp here.
-  
   return { id: orderId, message: "Order processed successfully" };
 }
 
 function updateOrderStatus(payload) {
   const sheet = getSheetByName(SHEET_ORDERS);
   const data = sheet.getDataRange().getValues();
-  const orderId = payload.orderId;
-  const newStatus = payload.status;
+  const headers = data[0];
+  const idIndex = getHeaderIndex(headers, "Order_ID");
+  const statusIndex = getHeaderIndex(headers, "Status");
   
-  if (!orderId || !newStatus) throw new Error("Order ID and Status are required.");
-  
-  // Find the row with matching ID (assuming Order_ID is in Column A, index 0)
-  let rowIndex = -1;
-  for (let i = 1; i < data.length; i++) { // Skip headers
-    if (data[i][0].toString() === orderId.toString()) {
-      rowIndex = i + 1;
-      break;
-    }
-  }
-  
-  if (rowIndex === -1) throw new Error("Order ID not found.");
-  
-  // Update the Status column (Assuming Status is Column D, index 3 meaning column index 4 for getRange)
-  // Let's verify headers: ["Order_ID", "Timestamp", "Customer_Name", "Status", "Items_JSON", "Total_Amount"] => index 3 => Column D (row: rowIndex, col: 4)
-  sheet.getRange(rowIndex, 4).setValue(newStatus);
-  
-  return { id: orderId, status: newStatus, message: "Order status updated." };
+  const rowIndex = data.findIndex((row, idx) => idx > 0 && row[idIndex].toString() === payload.orderId.toString()) + 1;
+  if (rowIndex <= 0) throw new Error("Order ID not found.");
+
+  sheet.getRange(rowIndex, statusIndex + 1).setValue(payload.status);
+  return { id: payload.orderId, status: payload.status, message: "Order status updated." };
 }
 
 // ==========================================
 // EMPLOYEES CORE LOGIC
 // ==========================================
 function getEmployees() {
-  const sheet = getSheetByName(SHEET_EMPLOYEES);
-  const data = sheet.getDataRange().getValues();
-  
-  if (data.length <= 1) return []; // Only headers or empty
-  
-  const headers = data[0];
-  const employees = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    let employeeData = {};
-    for (let j = 0; j < headers.length; j++) {
-      employeeData[headers[j]] = row[j];
-    }
-    employees.push(employeeData);
-  }
-  return employees;
+  return sheetToObjects(SHEET_EMPLOYEES, "Employee_ID");
 }
 
 function addEmployee(payload) {
   const sheet = getSheetByName(SHEET_EMPLOYEES);
-  const employeeId = Utilities.getUuid();
-  
-  const newRow = [
-    employeeId,
+  sheet.appendRow([
+    Utilities.getUuid(),
     payload.name || "Unknown",
     payload.mobile || "",
     payload.email || "",
     payload.status || "Active",
     new Date()
-  ];
-  
-  sheet.appendRow(newRow);
-  
-  return { id: employeeId, message: "Employee registered successfully" };
+  ]);
+  return { message: "Employee registered successfully" };
 }
 
 // ==========================================
 // GLOBALS & UTILITIES
 // ==========================================
 
-/**
- * Helper to grab a sheet by name. If it doesn't exist, it auto-creates it
- * and applies the necessary header row so it's ready to use instantly.
- */
 function getSheetByName(sheetName) {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = spreadsheet.getSheetByName(sheetName);
   
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
-    
-    // Auto-setup headers dynamically based on which sheet is requested
     if (sheetName === SHEET_PRODUCTS) {
       sheet.appendRow(["ProductID", "ProductName", "Price", "Category", "SubCategory", "Description", "Tags", "ImageURL", "InStock", "Featured", "SortOrder"]);
-      sheet.getRange(1, 1, 1, 11).setFontWeight("bold");
     } else if (sheetName === SHEET_ORDERS) {
       sheet.appendRow(["Order_ID", "Timestamp", "Customer_Name", "Status", "Items_JSON", "Total_Amount"]);
-      sheet.getRange(1, 1, 1, 6).setFontWeight("bold");
-    } else if (sheetName === SHEET_CATEGORIES) {
-      sheet.appendRow(["Women", "Kurtis, Sarees, Dupattas, Suits, Bottoms"]);
-      sheet.appendRow(["Men", "Shirts, Ethnic Wear, Bottomwear, Casuals"]);
-      sheet.appendRow(["Kids", "Ethnic Wear, Frocks, Boys Wear, Accessories"]);
-      sheet.appendRow(["Accessories", "Jewellery, Bags, Footwear"]);
     } else if (sheetName === SHEET_EMPLOYEES) {
       sheet.appendRow(["Employee_ID", "Name", "Mobile", "Email", "Status", "JoinedDate"]);
-      sheet.getRange(1, 1, 1, 6).setFontWeight("bold");
     }
-    
-    // Freeze the top row so headers stay visible when scrolling
+    sheet.getRange(1, 1, 1, sheet.getLastColumn()).setFontWeight("bold");
     sheet.setFrozenRows(1);
   }
-  
   return sheet;
 }
 
-/**
- * Formats the response into a proper JSON Web App output
- */
-function createJsonResponse(data, statusCode = 200) {
-  // Note: Google Apps Script 'ContentService' currently lacks a direct way to set HTTP Status codes dynamically 
-  // without returning custom error pages, so we handle success/error strictly via the JSON payload body.
-  const stringified = JSON.stringify(data);
-  return ContentService.createTextOutput(stringified).setMimeType(ContentService.MimeType.JSON);
+function createJsonResponse(data) {
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
 
-// -------------------------------------------------------------
-// REQUIRED: Avoid CORS Preflight Issues with Vanilla JS Setup 
-// -------------------------------------------------------------
 function doOptions(e) {
   return createJsonResponse({ status: "ok" });
 }

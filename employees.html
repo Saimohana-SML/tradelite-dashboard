@@ -286,16 +286,11 @@
             };
 
             try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'addEmployee',
-                        payload: payload
-                    })
-                });
+                const url = new URL(APPS_SCRIPT_URL);
+                url.searchParams.set('action', 'addEmployee');
+                url.searchParams.set('payload', JSON.stringify(payload));
 
+                const response = await fetch(url.toString());
                 const result = await response.json();
                 if (result.status === "success") {
                     closeEmployeeModal();
