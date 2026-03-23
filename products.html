@@ -82,13 +82,24 @@
 
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+        const CACHE_TTL = 5 * 60 * 1000;
+
+        function getCached(key) {
+            try {
+                const item = JSON.parse(sessionStorage.getItem(key));
+                if (item && (Date.now() - item.ts) < CACHE_TTL) return item.data;
+            } catch(e) {}
+            return null;
+        }
+        function setCache(key, data) {
+            try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+        }
 
         // Smart navigation: works in localhost and GAS
         function navTo(page) {
             if (window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
                 window.location.href = page + '.html';
             } else {
-                // Use window.top to break out of GAS iframe
                 window.top.location.href = APPS_SCRIPT_URL + '?page=' + page;
             }
         }
@@ -96,9 +107,14 @@
         async function loadProducts() {
             const list = document.getElementById('product-list');
             try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
-                const json = await res.json();
-                const products = json.data || [];
+                // Check cache first
+                let products = getCached('getProducts');
+                if (!products) {
+                    const res = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
+                    const json = await res.json();
+                    products = json.data || [];
+                    setCache('getProducts', products);
+                }
 
                 list.innerHTML = '';
                 if (products.length === 0) {
@@ -106,32 +122,29 @@
                     return;
                 }
 
-                products.forEach(p => {
-                    list.innerHTML += `
-                        <tr class="border-b hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-slate-100 rounded border flex items-center justify-center overflow-hidden">
-                                        ${p.images && p.images[0] ? `<img src="${p.images[0]}" class="object-cover w-full h-full" />` : '<span class="material-symbols-outlined text-slate-400">image</span>'}
-                                    </div>
-                                    <span class="font-bold">${p.name}</span>
+                list.innerHTML = products.map(p => `
+                    <tr class="border-b hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-100 rounded border flex items-center justify-center overflow-hidden">
+                                    ${p.images && p.images[0] ? `<img src="${p.images[0]}" class="object-cover w-full h-full" />` : '<span class="material-symbols-outlined text-slate-400">image</span>'}
                                 </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-500 font-medium">${p.category}</td>
-                            <td class="px-6 py-4 text-right font-bold text-blue-900">₹${p.price}</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[11px] font-black uppercase ${p.availability.toLowerCase().includes('out') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                                    ${p.availability}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-slate-400 hover:text-blue-600 transition-colors">
-                                    <span class="material-symbols-outlined">edit_square</span>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
+                                <span class="font-bold">${p.name}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500 font-medium">${p.category}</td>
+                        <td class="px-6 py-4 text-right font-bold text-blue-900">₹${p.price}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-2 py-1 rounded-full text-[11px] font-black uppercase ${p.availability.toLowerCase().includes('out') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
+                                ${p.availability}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="text-slate-400 hover:text-blue-600 transition-colors">
+                                <span class="material-symbols-outlined">edit_square</span>
+                            </button>
+                        </td>
+                    </tr>`).join('');
             } catch (e) {
                 list.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-red-500 font-bold">Failed to load system data.</td></tr>';
             }

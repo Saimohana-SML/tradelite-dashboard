@@ -154,43 +154,61 @@
     <!-- GAS Integration Logic -->
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+        const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+        // Cache helper — reads/writes from sessionStorage
+        function getCached(key) {
+            try {
+                const item = JSON.parse(sessionStorage.getItem(key));
+                if (item && (Date.now() - item.ts) < CACHE_TTL) return item.data;
+            } catch(e) {}
+            return null;
+        }
+        function setCache(key, data) {
+            try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+        }
+
+        async function fetchCached(action) {
+            const cached = getCached(action);
+            if (cached) return cached;
+            const res = await fetch(`${APPS_SCRIPT_URL}?action=${action}`);
+            const json = await res.json();
+            const data = json.data || [];
+            setCache(action, data);
+            return data;
+        }
 
         async function fetchStats() {
             try {
-                // Products
-                const resProducts = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
-                const productsData = await resProducts.json();
-                const products = productsData.data || [];
+                // ✅ Fetch products AND orders in PARALLEL (2x faster)
+                const [products, rawOrders] = await Promise.all([
+                    fetchCached('getProducts'),
+                    fetchCached('getOrders')
+                ]);
 
+                // Products stats
                 document.getElementById('stat-products').innerText = products.length;
-                const oos = products.filter(p => (p.availability && p.availability.toLowerCase().includes("out")));
+                const oos = products.filter(p => p.availability && p.availability.toLowerCase().includes("out"));
                 document.getElementById('stat-oos').innerText = oos.length;
                 document.getElementById('stat-active-products').innerText = products.length - oos.length;
 
-                // Table Update
+                // Recent products table
                 const tb = document.getElementById('recent-products-body');
-                tb.innerHTML = '';
-                products.slice(0, 5).forEach(p => {
-                    tb.innerHTML += `
-                        <tr class="border-b last:border-0 hover:bg-slate-50 transition-colors">
-                            <td class="px-8 py-4 font-medium">${p.name}</td>
-                            <td class="px-4 py-4">₹${p.price}</td>
-                            <td class="px-4 py-4 text-sm">${p.availability}</td>
-                            <td class="px-8 py-4 text-right">
-                                <span class="px-2 py-1 text-xs font-bold rounded ${p.availability.toLowerCase().includes("out") ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                                    ${p.availability.toLowerCase().includes("out") ? 'Inactive' : 'Active'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
+                tb.innerHTML = products.slice(0, 5).map(p => `
+                    <tr class="border-b last:border-0 hover:bg-slate-50 transition-colors">
+                        <td class="px-8 py-4 font-medium">${p.name}</td>
+                        <td class="px-4 py-4">₹${p.price}</td>
+                        <td class="px-4 py-4 text-sm">${p.availability}</td>
+                        <td class="px-8 py-4 text-right">
+                            <span class="px-2 py-1 text-xs font-bold rounded ${p.availability.toLowerCase().includes("out") ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
+                                ${p.availability.toLowerCase().includes("out") ? 'Inactive' : 'Active'}
+                            </span>
+                        </td>
+                    </tr>`).join('');
 
-                // Orders
-                const resOrders = await fetch(`${APPS_SCRIPT_URL}?action=getOrders`);
-                const ordersData = await resOrders.json();
-                // Filter out empty/phantom rows — check both possible key names
-                const orders = (ordersData.data || []).filter(o => {
-                    const id = o.OrderID || o.Order_ID || o['Order_ID'] || '';
+                // Orders stats — filter phantom empty rows
+                const orders = rawOrders.filter(o => {
+                    const id = o.OrderID || o.Order_ID || '';
                     return id.toString().trim() !== '';
                 });
                 document.getElementById('stat-orders').innerText = orders.length;
@@ -202,7 +220,6 @@
                     else if (st.includes("contact")) stats.contacted++;
                     else stats.closed++;
                 });
-
                 document.getElementById('stat-orders-new').innerText = stats.new;
                 document.getElementById('stat-orders-contacted').innerText = stats.contacted;
                 document.getElementById('stat-orders-closed').innerText = stats.closed;
