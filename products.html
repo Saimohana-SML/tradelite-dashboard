@@ -24,14 +24,14 @@
 <body class="bg-slate-50 text-slate-900 antialiased">
     <aside class="h-screen w-64 fixed left-0 top-0 bg-white border-r z-40 hidden md:block">
         <div class="p-8">
-            <h1 class="text-2xl font-black text-blue-900">Tradelite</h1>
+            <h1 class="text-2xl font-black text-orange-600">Tradelite</h1>
         </div>
         <nav class="px-4 space-y-1">
             <a class="text-slate-600 px-4 py-3 flex items-center gap-3 hover:bg-slate-100 rounded-lg"
                 href="javascript:void(0)" onclick="navTo('admin-dashboard')">
                 <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
-            <a class="bg-blue-50 text-blue-700 font-bold px-4 py-3 flex items-center gap-3 rounded-lg"
+            <a class="bg-orange-50 text-orange-600 font-bold px-4 py-3 flex items-center gap-3 rounded-lg"
                 href="javascript:void(0)" onclick="navTo('products')">
                 <span class="material-symbols-outlined">inventory_2</span> Products
             </a>
@@ -54,7 +54,7 @@
                     <p class="text-slate-500">Manage your business assets across all categories.</p>
                 </div>
                 <a href="javascript:void(0)" onclick="navTo('add-newproduct')"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2">
+                    class="bg-orange-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-orange-700 transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined">add</span> Add New Product
                 </a>
             </div>
@@ -133,14 +133,14 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-500 font-medium">${p.category}</td>
-                        <td class="px-6 py-4 text-right font-bold text-blue-900">₹${p.price}</td>
+                        <td class="px-6 py-4 text-right font-bold text-orange-600">₹${p.price}</td>
                         <td class="px-6 py-4 text-center">
                             <span class="px-2 py-1 rounded-full text-[11px] font-black uppercase ${p.availability.toLowerCase().includes('out') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
                                 ${p.availability}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <button class="text-slate-400 hover:text-blue-600 transition-colors">
+                            <button class="text-slate-400 hover:text-orange-500 transition-colors">
                                 <span class="material-symbols-outlined">edit_square</span>
                             </button>
                         </td>

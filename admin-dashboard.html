@@ -41,28 +41,28 @@
         class="h-screen w-64 fixed left-0 top-0 overflow-y-auto hidden md:block bg-slate-50 border-r border-slate-200/50 z-40">
         <div class="flex flex-col gap-8 pt-10 px-4 h-full">
             <div class="px-4">
-                <h1 class="text-2xl font-bold tracking-tight text-blue-900">Tradelite Admin</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-orange-600">Tradelite Admin</h1>
                 <p class="text-xs text-on-surface-variant font-medium mt-1 uppercase tracking-wider">Enterprise
                     Management</p>
             </div>
             <nav class="flex-1 flex flex-col gap-1">
                 <!-- Navigation -->
-                <a class="bg-blue-100 text-blue-900 font-semibold rounded-lg px-4 py-3 flex items-center gap-3"
+                <a class="bg-orange-100 text-orange-600 font-semibold rounded-lg px-4 py-3 flex items-center gap-3"
                     href="<?= getPageUrl('admin-dashboard') ?>">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                <a class="text-slate-600 hover:text-blue-700 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
+                <a class="text-slate-600 hover:text-orange-600 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
                     href="<?= getPageUrl('products') ?>">
                     <span class="material-symbols-outlined">inventory_2</span>
                     <span>Products</span>
                 </a>
-                <a class="text-slate-600 hover:text-blue-700 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
+                <a class="text-slate-600 hover:text-orange-600 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
                     href="<?= getPageUrl('order-management') ?>">
                     <span class="material-symbols-outlined">shopping_cart</span>
                     <span>Orders</span>
                 </a>
-                <a class="text-slate-600 hover:text-blue-700 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
+                <a class="text-slate-600 hover:text-orange-600 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg"
                     href="<?= getPageUrl('employees') ?>">
                     <span class="material-symbols-outlined">badge</span>
                     <span>Employees</span>
@@ -133,9 +133,9 @@
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h3 class="text-xl font-bold mb-6">Orders Status</h3>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center bg-blue-50/50 p-3 rounded">
+                        <div class="flex justify-between items-center bg-orange-50/50 p-3 rounded">
                             <span class="text-sm font-semibold">New</span>
-                            <span id="stat-orders-new" class="font-bold text-blue-600 italic">...</span>
+                            <span id="stat-orders-new" class="font-bold text-orange-500 italic">...</span>
                         </div>
                         <div class="flex justify-between items-center bg-orange-50/50 p-3 rounded">
                             <span class="text-sm font-semibold">Contacted</span>
@@ -153,7 +153,7 @@
 
     <!-- GAS Integration Logic -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz64Mu1DYISErKJH-c_xyAfPwY3YrutYsrTEmopmju3a2PFO4lFYaoBLN3ZkOYLjnOr/exec";
         const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
         // Cache helper — reads/writes from sessionStorage

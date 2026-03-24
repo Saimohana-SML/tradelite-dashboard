@@ -24,7 +24,7 @@
 <body class="bg-slate-50 text-slate-900 antialiased">
     <aside class="h-screen w-64 fixed left-0 top-0 bg-white border-r z-40 hidden md:block">
         <div class="p-8">
-            <h1 class="text-2xl font-black text-blue-900">Tradelite</h1>
+            <h1 class="text-2xl font-black text-orange-600">Tradelite</h1>
         </div>
         <nav class="px-4 space-y-1">
             <a class="text-slate-600 px-4 py-3 flex items-center gap-3 hover:bg-slate-100 rounded-lg"
@@ -35,7 +35,7 @@
                 href="<?= getPageUrl('products') ?>">
                 <span class="material-symbols-outlined">inventory_2</span> Products
             </a>
-            <a class="bg-blue-50 text-blue-700 font-bold px-4 py-3 flex items-center gap-3 rounded-lg"
+            <a class="bg-orange-50 text-orange-600 font-bold px-4 py-3 flex items-center gap-3 rounded-lg"
                 href="<?= getPageUrl('order-management') ?>">
                 <span class="material-symbols-outlined">shopping_cart</span> Orders
             </a>
@@ -94,20 +94,20 @@
 
                 orders.forEach(o => {
                     const status = (o.Status || "New").toLowerCase();
-                    const statusClass = status.includes("new") ? "bg-blue-100 text-blue-700" : (status.includes("contact") ? "bg-orange-100 text-orange-700" : "bg-green-100 text-green-700");
+                    const statusClass = status.includes("new") ? "bg-orange-100 text-orange-600" : (status.includes("contact") ? "bg-orange-100 text-orange-700" : "bg-green-100 text-green-700");
 
                     list.innerHTML += `
                         <tr class="border-b hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-mono text-xs font-bold text-slate-400">${o.Order_ID || o.id}</td>
                             <td class="px-6 py-4 font-bold">${o.Customer_Name || o.customerName}</td>
-                            <td class="px-6 py-4 text-right font-bold text-blue-900">₹${o.Total_Amount || o.totalAmount}</td>
+                            <td class="px-6 py-4 text-right font-bold text-orange-600">₹${o.Total_Amount || o.totalAmount}</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="px-2 py-1 rounded-full text-[11px] font-black uppercase ${statusClass}">
                                     ${o.Status || o.status}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button class="text-slate-400 hover:text-blue-600 transition-colors">
+                                <button class="text-slate-400 hover:text-orange-500 transition-colors">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
                             </td>

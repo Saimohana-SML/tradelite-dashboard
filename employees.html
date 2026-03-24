@@ -53,25 +53,25 @@
     <!-- SideNavBar -->
     <aside
         class="h-screen w-64 fixed left-0 top-0 z-40 bg-slate-50 dark:bg-slate-950 font-inter text-sm font-medium flex flex-col border-r border-transparent">
-        <div class="text-2xl font-black text-blue-800 mt-10 mb-8 px-6">
+        <div class="text-2xl font-black text-orange-600 mt-10 mb-8 px-6">
             Tradelite
             <div class="text-xs font-medium text-slate-500 tracking-wider uppercase mt-1">Executive Panel</div>
         </div>
         <nav class="flex-1 space-y-1">
             <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
-                href="admin-dashboard.html">
+                href="javascript:void(0)" onclick="navTo('admin-dashboard')">
                 <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
             <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
-                href="products.html">
+                href="javascript:void(0)" onclick="navTo('products')">
                 <span class="material-symbols-outlined">inventory_2</span> Products
             </a>
             <a class="text-slate-600 mx-2 px-4 py-3 flex items-center gap-3 hover:bg-slate-200/50 transition-all cursor-pointer"
-                href="order-management.html">
+                href="javascript:void(0)" onclick="navTo('order-management')">
                 <span class="material-symbols-outlined">shopping_cart</span> Orders
             </a>
-            <a class="bg-blue-100 text-blue-900 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer"
-                href="employees.html">
+            <a class="bg-orange-100 text-orange-600 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer"
+                href="javascript:void(0)" onclick="navTo('employees')">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
                 Employees
             </a>
@@ -207,41 +207,70 @@
     </div>
 
     <!-- Scripts -->
+    <!-- Scripts -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz64Mu1DYISErKJH-c_xyAfPwY3YrutYsrTEmopmju3a2PFO4lFYaoBLN3ZkOYLjnOr/exec";
+        const CACHE_TTL = 5 * 60 * 1000;
+
+        function getCached(key) {
+            try {
+                const item = JSON.parse(sessionStorage.getItem(key));
+                if (item && (Date.now() - item.ts) < CACHE_TTL) return item.data;
+            } catch(e) {}
+            return null;
+        }
+        function setCache(key, data) {
+            try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+        }
+
+        // Smart navigation: works in localhost and GAS
+        function navTo(page) {
+            if (window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
+                window.location.href = page + '.html';
+            } else {
+                window.top.location.href = APPS_SCRIPT_URL + '?page=' + page;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', fetchEmployees);
 
         async function fetchEmployees() {
             const tableBody = document.getElementById('employee-table-body');
             try {
-                const url = new URL(APPS_SCRIPT_URL);
-                url.searchParams.append("action", "getEmployees");
-                const res = await fetch(url.toString());
-                const result = await res.json();
+                let employees = getCached('getEmployees');
+                if (!employees) {
+                    const res = await fetch(`${APPS_SCRIPT_URL}?action=getEmployees`);
+                    const result = await res.json();
+                    employees = result.data || [];
+                    setCache('getEmployees', employees);
+                }
 
-                const employees = result.data || [];
                 tableBody.innerHTML = '';
-
                 document.getElementById('stat-total').innerText = employees.length;
-                document.getElementById('stat-active').innerText = employees.filter(e => e.Status === "Active").length;
+                
+                // Fixed active staff filtering: handles case-insensitivity and default
+                const activeCount = employees.filter(e => {
+                    const st = (e.Status || "Active").toLowerCase();
+                    return st === "active";
+                }).length;
+                document.getElementById('stat-active').innerText = activeCount;
 
                 if (employees.length === 0) {
                     tableBody.innerHTML = `<tr><td colspan="4" class="px-8 py-10 text-center text-on-surface-variant">No employees registered yet.</td></tr>`;
                     return;
                 }
 
-                employees.forEach(emp => {
+                tableBody.innerHTML = employees.map(emp => {
                     let dateDisplay = "Just now";
-                    if (emp.JoinedDate) {
+                    if (emp.Joined_Date || emp.JoinedDate) {
                         try {
-                            const d = new Date(emp.JoinedDate);
+                            const d = new Date(emp.Joined_Date || emp.JoinedDate);
                             dateDisplay = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
                         } catch (e) { }
                     }
 
-                    const rowHTML = `
-                        <tr class="hover:bg-surface-bright transition-colors group">
+                    return `
+                        <tr class="hover:bg-slate-50 transition-colors group">
                             <td class="px-8 py-6">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-lg">
@@ -255,8 +284,7 @@
                             <td class="px-8 py-6 text-sm text-on-surface-variant">${dateDisplay}</td>
                         </tr>
                     `;
-                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
-                });
+                }).join('');
 
             } catch (err) {
                 console.error("Failed to fetch employees:", err);
@@ -293,8 +321,10 @@
                 const response = await fetch(url.toString());
                 const result = await response.json();
                 if (result.status === "success") {
+                    // Critical: clear cache after adding new employee
+                    sessionStorage.removeItem('getEmployees');
                     closeEmployeeModal();
-                    fetchEmployees(); // Reload list
+                    fetchEmployees(); 
                 } else {
                     alert("Backend error.");
                 }

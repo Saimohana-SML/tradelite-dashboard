@@ -10,7 +10,7 @@ const SHEET_EMPLOYEES = "Employees";
  */
 function doGet(e) {
   var action = e.parameter.action;
-  var page = e.parameter.page || 'admin-dashboard'; // Default page
+  var page = e.parameter.page || 'admin-dashboard'; 
 
   // If there's an action, it's a DATA request (read OR write via GET)
   if (action) {
