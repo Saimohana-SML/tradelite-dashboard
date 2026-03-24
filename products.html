@@ -59,29 +59,86 @@
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 border-b">
-                        <tr>
-                            <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Product</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500">Category</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-right">Price</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-center">Stock</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="product-list">
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">Loading inventory data...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Filter Sidebar & Product Grid Container -->
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+                <aside class="w-full md:w-64 flex-shrink-0 space-y-8 hidden md:block">
+                    <!-- Categories -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Categories</h3>
+                        <ul class="space-y-2 text-sm font-medium">
+                            <li class="flex justify-between items-center text-slate-600 hover:text-orange-600 cursor-pointer py-1 block">
+                                <span>All Categories</span>
+                            </li>
+                            <li class="flex justify-between items-center text-slate-600 hover:text-orange-600 cursor-pointer py-1 block">
+                                <span>Women</span> <span class="bg-slate-100 text-slate-400 text-xs px-2 py-0.5 rounded-full">15</span>
+                            </li>
+                            <li class="flex justify-between items-center text-orange-600 bg-orange-50 rounded-lg px-3 py-2 cursor-pointer font-bold block">
+                                <span>Men</span> <span class="bg-white text-orange-600 text-xs px-2 py-0.5 rounded-full shadow-sm">9</span>
+                            </li>
+                            <li class="flex justify-between items-center text-slate-600 hover:text-orange-600 cursor-pointer py-1 block">
+                                <span>Kids</span> <span class="bg-slate-100 text-slate-400 text-xs px-2 py-0.5 rounded-full">5</span>
+                            </li>
+                            <li class="flex justify-between items-center text-slate-600 hover:text-orange-600 cursor-pointer py-1 block">
+                                <span>Accessories</span> <span class="bg-slate-100 text-slate-400 text-xs px-2 py-0.5 rounded-full">1</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Subcategories -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Subcategory</h3>
+                        <ul class="space-y-3 text-sm font-medium">
+                            <li class="text-orange-600 font-bold cursor-pointer">All Men</li>
+                            <li class="text-slate-500 hover:text-orange-600 cursor-pointer pl-2 flex items-center gap-2"><span class="w-1 h-1 bg-slate-300 rounded-full"></span> Shirts</li>
+                            <li class="text-slate-500 hover:text-orange-600 cursor-pointer pl-2 flex items-center gap-2"><span class="w-1 h-1 bg-slate-300 rounded-full"></span> Ethnic Wear</li>
+                            <li class="text-slate-500 hover:text-orange-600 cursor-pointer pl-2 flex items-center gap-2"><span class="w-1 h-1 bg-slate-300 rounded-full"></span> Bottomwear</li>
+                            <li class="text-slate-500 hover:text-orange-600 cursor-pointer pl-2 flex items-center gap-2"><span class="w-1 h-1 bg-slate-300 rounded-full"></span> Casuals</li>
+                        </ul>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Price</h3>
+                        <ul class="space-y-3 text-sm font-medium text-slate-600">
+                            <li class="flex items-center gap-3 cursor-pointer"><div class="w-4 h-4 rounded-full border-2 border-slate-300"></div> All Prices</li>
+                            <li class="flex items-center gap-3 cursor-pointer"><div class="w-4 h-4 rounded-full border-2 border-slate-300"></div> Under ₹6,500</li>
+                            <li class="flex items-center gap-3 cursor-pointer"><div class="w-4 h-4 rounded-full border-2 border-slate-300"></div> ₹6,500 - ₹12,501</li>
+                            <li class="flex items-center gap-3 cursor-pointer"><div class="w-4 h-4 rounded-full border-2 border-slate-300"></div> ₹12,501 - ₹18,502</li>
+                            <li class="flex items-center gap-3 cursor-pointer"><div class="w-4 h-4 rounded-full border-2 border-slate-300"></div> Over ₹18,502</li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <!-- Product Grid Area -->
+                <div class="flex-1">
+                    <!-- Toolbar -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-slate-500">Sort by:</span>
+                            <select class="border-slate-200 rounded-lg text-sm font-bold text-slate-800 focus:ring-orange-500 focus:border-orange-500 cursor-pointer pr-8 py-2">
+                                <option>Price: High to Low</option>
+                                <option>Price: Low to High</option>
+                                <option>Newest Arrivals</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-1 border border-slate-200 rounded-lg p-1">
+                            <button class="p-1.5 rounded-md bg-slate-100 text-slate-800"><span class="material-symbols-outlined text-[20px]">grid_view</span></button>
+                            <button class="p-1.5 rounded-md text-slate-400 hover:text-slate-800"><span class="material-symbols-outlined text-[20px]">view_list</span></button>
+                        </div>
+                    </div>
+
+                    <!-- Grid -->
+                    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="py-12 text-center text-slate-400 col-span-full">Loading inventory...</div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9eGV7dXzy0e-mTuMdC0Lv98zlfGOyvIDX0Q7zNk3ftCj__nIhuEuVBkgp3MklkEbW/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz64Mu1DYISErKJH-c_xyAfPwY3YrutYsrTEmopmju3a2PFO4lFYaoBLN3ZkOYLjnOr/exec";
         const CACHE_TTL = 5 * 60 * 1000;
 
         function getCached(key) {
@@ -95,7 +152,6 @@
             try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
         }
 
-        // Smart navigation: works in localhost and GAS
         function navTo(page) {
             if (window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
                 window.location.href = page + '.html';
@@ -107,7 +163,6 @@
         async function loadProducts() {
             const list = document.getElementById('product-list');
             try {
-                // Check cache first
                 let products = getCached('getProducts');
                 if (!products) {
                     const res = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
@@ -116,35 +171,51 @@
                     setCache('getProducts', products);
                 }
 
-                list.innerHTML = '';
                 if (products.length === 0) {
-                    list.innerHTML = '<tr><td colspan="5" class="py-10 text-center">No products found.</td></tr>';
+                    list.innerHTML = '<div class="col-span-full py-10 text-center text-slate-500 font-medium">No products found.</div>';
                     return;
                 }
 
-                list.innerHTML = products.map(p => `
-                    <tr class="border-b hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-slate-100 rounded border flex items-center justify-center overflow-hidden">
-                                    ${p.images && p.images[0] ? `<img src="${p.images[0]}" class="object-cover w-full h-full" />` : '<span class="material-symbols-outlined text-slate-400">image</span>'}
-                                </div>
-                                <span class="font-bold">${p.name}</span>
+                list.innerHTML = products.map(p => {
+                    const outOfStock = p.availability && p.availability.toLowerCase().includes('out');
+                    const badgeText = p.tags && p.tags.length > 0 ? p.tags[0].toUpperCase() : p.subCategory.toUpperCase();
+                    
+                    return `
+                    <div class="bg-white rounded-[24px] shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 overflow-hidden flex flex-col group cursor-pointer relative">
+                        <!-- Image Container -->
+                        <div class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                            ${p.images && p.images[0] 
+                                ? `<img src="${p.images[0]}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ${outOfStock ? 'opacity-50 blur-[2px]' : ''}" />` 
+                                : `<div class="w-full h-full bg-slate-400 opacity-60 group-hover:opacity-50 transition-all duration-500"></div>`
+                            }
+
+                            <!-- Badges & Overlay Elements -->
+                            <div class="absolute top-4 left-4">
+                                <span class="bg-[#0b1b36] text-white text-[10px] font-black tracking-wider px-2 py-1 rounded shadow-md uppercase">${badgeText}</span>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-500 font-medium">${p.category}</td>
-                        <td class="px-6 py-4 text-right font-bold text-blue-900">₹${p.price}</td>
-                        <td class="px-6 py-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[11px] font-black uppercase ${p.availability.toLowerCase().includes('out') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                                ${p.availability}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="text-slate-400 hover:text-blue-600 transition-colors">
-                                <span class="material-symbols-outlined">edit_square</span>
+                            
+                            <button class="absolute top-4 right-4 w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 hover:text-red-500 hover:shadow-md transition-all z-10">
+                                <span class="material-symbols-outlined text-[18px]">favorite</span>
                             </button>
-                        </td>
-                    </tr>`).join('');
+
+                            ${outOfStock ? `
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span class="bg-white/95 text-slate-700 text-xs font-black tracking-widest px-4 py-2 rounded-lg shadow-lg">CURRENTLY UNAVAILABLE</span>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-6 flex flex-col flex-1 bg-white relative z-20">
+                            <span class="text-[10px] font-bold text-orange-600 tracking-widest uppercase mb-2">
+                                ${p.category} ${p.subCategory ? `• ${p.subCategory}` : ''}
+                            </span>
+                            <h3 class="font-bold text-slate-900 leading-snug mb-3 flex-1 text-lg group-hover:text-orange-600 transition-colors line-clamp-2">${p.name}</h3>
+                            <p class="font-black text-slate-900 text-xl font-manrope">₹${p.price.toLocaleString('en-IN')}</p>
+                        </div>
+                    </div>
+                `}).join('');
+
             } catch (e) {
                 list.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-red-500 font-bold">Failed to load system data.</td></tr>';
             }
